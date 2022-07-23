@@ -14,37 +14,6 @@ export class level {
     public loadLevel() {
         var levelDef = Level1
         this.backgroundSprite = PIXI.Sprite.from(levelDef.path)
-        const collW = globals.collW;
-        const collH = globals.collH;
-
-        let pixArray = game.app.renderer.plugins.extract.pixels(this.backgroundSprite)
-
-        let val = pixArray.reduce((prev: number, i: number) => prev + i, 0)
-        console.log("val: " + val)
-
-        this.backgroundSprite.width = globals.sceneW
-        this.backgroundSprite.height = globals.sceneH
-        this.collMap = new Uint8Array(globals.collW * globals.collH)
-        for (let y = 0; y < collH; ++y)
-        {
-            for (let x = 0; x < collW; ++x)
-            {
-                let idx = y * collW + x;
-                let r = pixArray[idx + 0]
-                let g = pixArray[idx + 1]
-                let b = pixArray[idx + 2]
-                this.collMap[idx] = 128;
-            }
-        }
-
-        let b = new PIXI.BufferResource(this.collMap, { width: collW, height: collH })
-        let bt = new PIXI.BaseTexture(b);
-        bt.format = WebGLRenderingContext.LUMINANCE
-        let t = new PIXI.Texture(bt)
-
-        this.backgroundSprite = PIXI.Sprite.from(t)
-
-        console.log(this.collMap.length)
 
         level.homeX = levelDef.homeX
         level.homeY = levelDef.homeY
