@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js'
 import game from './game'
 import globals from './globals'
+import sprites from './sprites'
 
 export class level {
     homeMarkers: number[] = []
@@ -8,12 +9,15 @@ export class level {
     collMap: Uint8Array = new Uint8Array()
     static homeX: number = 0
     static homeY: number = 0
+    static worldToCollScale: number
 
     backgroundSprite: PIXI.Sprite | undefined
 
     public loadLevel() {
         var levelDef = Level1
-        this.backgroundSprite = PIXI.Sprite.from(levelDef.path)
+        this.backgroundSprite = sprites.level1Background
+        this.backgroundSprite.width = globals.sceneW
+        this.backgroundSprite.height = globals.sceneH
 
         level.homeX = levelDef.homeX
         level.homeY = levelDef.homeY

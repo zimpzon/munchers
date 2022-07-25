@@ -7,8 +7,8 @@ import GameLoader from './Components/GameLoader';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <GameLoader>
-    <React.StrictMode>
+    {/* <React.StrictMode> */}
       <App />
-    </React.StrictMode>
+    {/* </React.StrictMode> */}
   </GameLoader>
 );

@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import * as PIXI from 'pixi.js';
 import sprites from './../../Game/sprites';
 import collision from '../../Game/collision';
-import level from '../../Game/level';
 
 function GameLoader(props: any): JSX.Element {
   const [loadingComplete, setLoadingComplete] = useState(false);
@@ -13,22 +12,32 @@ function GameLoader(props: any): JSX.Element {
     const loader = new PIXI.Loader();
     loader.add('antDefault', 'gfx/ant.png');
     loader.add('level1Background', 'gfx/map-test-2.png');
+    loader.add('white_2x2', 'gfx/white_2x2.png');
 
     loader.load((_, resources: any) => {
       const levelData = getImageData('gfx/map-test-2.png');
       const total = levelData.w * levelData.h;
       collision.level = new Uint8Array(total);
-      for (let idx = 0; idx < total; idx += 4) {
+      for (let idx = 0; idx < total * 4; idx += 4) {
         let a = levelData.pixels[idx + 3];
         collision.level[idx / 4] = a;
       }
-      console.log(collision.level);
 
+      sprites.white_2x2 = new PIXI.Sprite(resources.white_2x2.texture);
       sprites.antDefault = new PIXI.Sprite(resources.antDefault.texture);
       sprites.level1Background = new PIXI.Sprite(resources.level1Background.texture);
+
+      // const buf = new Uint8Array(200 * 150 * 4);
+      // for (let idx = 0; idx < buf.length; idx += 4) {
+      //   buf[idx + 1] = collision.level[idx / 4] / 2;
+      //   buf[idx + 3] = 255;
+      // }
+      // var tex = PIXI.Texture.fromBuffer(buf, 200, 150);
+      // sprites.level1Background = new PIXI.Sprite(tex);
+
       console.log('Loading complete.');
 
-      // setLoadingComplete(true);
+      setLoadingComplete(true);
     });
   }, []);
 
