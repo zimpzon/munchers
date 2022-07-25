@@ -3,6 +3,8 @@ class globals {
     static sceneH: number = 900
     static collW: number = 800
     static collH: number = 600
+    static markersW: number = 800
+    static markersH: number = 600
 }
 
 export default globals

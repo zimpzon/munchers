@@ -19,6 +19,8 @@ export class Ant {
     prefRight: number = 0.4 - Math.random() * 0.15
 
     // NEXT: home trail. When at home set homeValue to max. When not at home, set value at gomeArray to current homeValue. homeValue decreases over time. Display home array.
+    // 2: Probably need some averaging and/or a larger sampling area to enable trail following.
+    
     // Random movement is currently frame dependent. Not a big deal, but it is WRONG.
     constructor() {
         this.container = new PIXI.Container();

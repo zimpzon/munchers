@@ -4,11 +4,14 @@ import globals from './globals'
 import sprites from './sprites'
 
 export class level {
-    homeMarkers: number[] = []
-    foodMarkers: number[] = []
+    public homeMarkers: number[] = new Array(globals.markersW * globals.markersH)
+    public foodMarkers: number[] = new Array(globals.markersW * globals.markersH)
     static homeX: number = 0
     static homeY: number = 0
-    static worldToCollScale: number
+    static markerScaleX: number
+    static markerScaleY: number
+    static markerMax: number = 1000
+    static markerDecayTime: number = 10000
 
     backgroundSprite: PIXI.Sprite | undefined
 
@@ -18,10 +21,31 @@ export class level {
         this.backgroundSprite.width = globals.sceneW
         this.backgroundSprite.height = globals.sceneH
 
+        level.markerScaleX = globals.markersW / globals.sceneW
+        level.markerScaleY = globals.markersH / globals.sceneH
+        
         level.homeX = levelDef.homeX
         level.homeY = levelDef.homeY
 
         game.app.stage.addChild(this.backgroundSprite);
+    }
+
+    private static calcIdx(x: number, y: number): number {
+        const x2 = Math.round(x * this.markerScaleX)
+        const y2 = Math.round(y * this.markerScaleY)
+        return y2 * globals.collW + x2
+    }
+
+    static sample(arr: number[], x: number, y: number): number {
+        const idx = this.calcIdx(x, y)
+        const val = arr[idx]
+        return Math.max(0, (this.markerMax - (Date.now() - val)) * (this.markerMax / this.markerDecayTime))
+    }
+
+    static set(arr: number[], x: number, y: number) {
+        const idx = this.calcIdx(x, y)
+        arr[idx] = 255 // for debugging
+        // arr[idx] = Date.now()
     }
 }
 
