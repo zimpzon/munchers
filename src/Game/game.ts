@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js'
 import { Ant } from './ant';
+import globals from './globals';
 import { level } from './level';
 
 class game {
@@ -23,7 +24,7 @@ class game {
     
         PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST
 
-        this.app = new PIXI.Application({ backgroundColor: 0x606060, width: 800, height: 600 });
+        this.app = new PIXI.Application({ backgroundColor: 0x606060, width: globals.sceneW, height: globals.sceneH });
         gameCanvas.appendChild(this.app.view)
 
         this.level = new level()

@@ -18,14 +18,16 @@ export class Ant {
     prefLeft: number = 0.4 - Math.random() * 0.15
     prefRight: number = 0.4 - Math.random() * 0.15
 
+    // NEXT: home trail. When at home set homeValue to max. When not at home, set value at gomeArray to current homeValue. homeValue decreases over time. Display home array.
+    // Random movement is currently frame dependent. Not a big deal, but it is WRONG.
     constructor() {
         this.container = new PIXI.Container();
         this.container.x = level.homeX
         this.container.y = level.homeY;
 
         const ant = new PIXI.Sprite(sprites.antDefault.texture)
-        ant.width = 10
-        ant.height = 10
+        ant.width = 5
+        ant.height = 5
         ant.anchor.set(0.5, 0.5)
         this.dir = MathUtil.RandomUnitVector()
         this.container.addChild(ant)

@@ -18,7 +18,6 @@ export class level {
         this.backgroundSprite.width = globals.sceneW
         this.backgroundSprite.height = globals.sceneH
 
-
         level.homeX = levelDef.homeX
         level.homeY = levelDef.homeY
 
@@ -33,9 +32,9 @@ class LevelDef {
 }
 
 const Level1: LevelDef = {
-    path: '/gfx/map-test-2.png',
-    homeX: 150,
-    homeY: 250,
+    path: '/gfx/level1.png',
+    homeX: 60,
+    homeY: 80,
 }
 
 export default level

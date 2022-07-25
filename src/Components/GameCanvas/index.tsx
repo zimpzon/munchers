@@ -16,7 +16,7 @@ function GameCanvas(): JSX.Element {
 
   return (
     <>
-      <div id='gameCanvas' style={{ width: '40%', aspectRatio: '1/1' }} />
+      <div id='gameCanvas' style={{ width: '80%', aspectRatio: '1/1' }} />
     </>
   );
 }
