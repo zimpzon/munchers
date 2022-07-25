@@ -15,6 +15,8 @@ export class Ant {
     pointFwd: PIXI.Point = new PIXI.Point()
     pointLeft: PIXI.Point = new PIXI.Point()
     pointRight: PIXI.Point = new PIXI.Point()
+    prefLeft: number = 0.4 - Math.random() * 0.15
+    prefRight: number = 0.4 - Math.random() * 0.15
 
     constructor() {
         this.container = new PIXI.Container();
@@ -57,7 +59,7 @@ export class Ant {
         dotRight.anchor.set(0.5, 0.5)
         this.scanRight = dotRight
         
-        this.container.addChild(dotFwd)
+        // this.container.addChild(dotFwd)
         // this.container.addChild(dotLeft)
         // this.container.addChild(dotRight)
 
@@ -67,20 +69,29 @@ export class Ant {
         game.app.stage.addChild(this.container)
     }
 
-    stop: boolean = false
+    turnAngle: number = 0
 
     public update(delta: number) {
-        if (this.stop)
-            return
+        const rndSwitch = this.turnAngle === 0 ? Math.random() < 0.1 : Math.random() < 0.1
+        if (rndSwitch) {
+            const rnd = Math.random()
+            if (rnd < this.prefLeft)
+                this.turnAngle = 3
+            else if (rnd > 1 - this.prefRight)
+                this.turnAngle = -3
+            else
+                this.turnAngle = 0
+        }
+            
+        this.dir.rotate(PIXI.DEG_TO_RAD * this.turnAngle * delta)
+        // this.turnAngle *= 0.01 * delta
 
-        // this.dir.rotate(PIXI.DEG_TO_RAD * 1)
         this.container.rotation = Math.atan2(this.dir.y, this.dir.x)
         const fwd = this.container.toGlobal(this.pointFwd)
 
         const newPos = new PIXI.Point(this.container.position.x + this.dir.x * delta, this.container.position.y + this.dir.y * delta)
         const s = collision.sample(fwd.x, fwd.y)
         if (s === 255) {
-            // this.stop = true
             this.dir.x *= -1
             this.dir.y *= -1
             return

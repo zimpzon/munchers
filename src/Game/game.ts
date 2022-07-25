@@ -29,7 +29,7 @@ class game {
         this.level = new level()
         this.level.loadLevel()
     
-        for (let i = 0; i < 10000; ++i) {
+        for (let i = 0; i < 10; ++i) {
             game.addAnt();
         }
 
