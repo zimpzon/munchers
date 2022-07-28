@@ -1,21 +1,29 @@
 import * as PIXI from 'pixi.js'
 import { Ant } from './ant';
+import collision from './collision';
 import globals from './globals';
 import { level } from './level';
+import { Soldier } from './soldier';
 
 class game {
     static app: PIXI.Application
     static level: level
-    static ants: Ant[] = [];
+    static ants: Ant[] = []
+    static soldiers: Soldier[] = []
+    static showHomeTrails: boolean = false
+    static showFoodTrails: boolean = false
 
     static stop() {
         console.log('Stopping game...')
         const gameCanvas = document.getElementById('gameCanvas') as HTMLCanvasElement
         gameCanvas.removeChild(this.app.view)
+        this.ants = []
+        this.soldiers = []
+       
         this.app.destroy()
     }
     
-    static run(tick: (delta: number) => void) {
+    static run(tick: () => void) {
         console.log('Starting game...')
     
         const gameCanvas = document.getElementById('gameCanvas') as HTMLCanvasElement
@@ -30,22 +38,49 @@ class game {
         this.level = new level()
         this.level.loadLevel()
     
-        for (let i = 0; i < 10; ++i) {
+        for (let i = 0; i < 3; ++i) {
             game.addAnt();
+        }
+
+        for (let i = 0; i < 0; ++i) {
+            game.addSoldier();
         }
 
         this.app.ticker.add(tick)
     }
 
-    static updateAnts(delta: number) {
+    static tickGame() {
         for (let ant of this.ants) {
-            ant.update(delta)
+            ant.update()
         }
+
+        for (let soldier of this.soldiers) {
+            soldier.update()
+        }
+
+        if (this.showHomeTrails)
+            collision.homeMarkers.updateDebug()
     }
 
     static addAnt() {
         const ant = new Ant();
         this.ants.push(ant);
+    }
+
+    static addSoldier() {
+        const soldier = new Soldier();
+        this.soldiers.push(soldier);
+    }
+
+    static recall() {
+        this.ants[0].recall()
+        // for (let ant of this.ants) {
+        //     ant.recall()
+        // }
+
+        for (let soldier of this.soldiers) {
+            soldier.recall()
+        }
     }
 }
 

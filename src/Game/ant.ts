@@ -2,9 +2,13 @@ import * as PIXI from 'pixi.js'
 import * as Vec2D from 'vector2d'
 import collision from './collision';
 import game from './game';
+import globals from './globals';
 import level from './level';
 import * as MathUtil from './math';
 import sprites from './sprites';
+import { distanceSqr } from './util';
+
+enum AntState { Exploring, ReturningHome }
 
 export class Ant {
     public dir: Vec2D.Vector
@@ -17,19 +21,20 @@ export class Ant {
     pointRight: PIXI.Point = new PIXI.Point()
     prefLeft: number = 0.4 - Math.random() * 0.15
     prefRight: number = 0.4 - Math.random() * 0.15
+    turnAngle: number = 0
+    individualSpeed: number = 50 + (Math.random() * 0.8 - 0.4)
+    atHomeTimestamp: number = 0
+    state: AntState = AntState.Exploring
 
-    // NEXT: home trail. When at home set homeValue to max. When not at home, set value at gomeArray to current homeValue. homeValue decreases over time. Display home array.
-    // 2: Probably need some averaging and/or a larger sampling area to enable trail following.
-    
-    // Random movement is currently frame dependent. Not a big deal, but it is WRONG.
     constructor() {
         this.container = new PIXI.Container();
         this.container.x = level.homeX
         this.container.y = level.homeY;
 
         const ant = new PIXI.Sprite(sprites.antDefault.texture)
-        ant.width = 5
-        ant.height = 5
+        ant.tint = 0xffffff
+        ant.width = 8
+        ant.height = 8
         ant.anchor.set(0.5, 0.5)
         this.dir = MathUtil.RandomUnitVector()
         this.container.addChild(ant)
@@ -69,13 +74,18 @@ export class Ant {
 
         this.container.pivot.x = 0
         this.container.pivot.y = 0
+        this.atHomeTimestamp = globals.gameTimeMs
 
         game.app.stage.addChild(this.container)
     }
 
-    turnAngle: number = 0
+    public recall() {
+        this.state = AntState.ReturningHome
+        // this.container.x = level.homeX
+        // this.container.y = level.homeY
+    }
 
-    public update(delta: number) {
+    private explore() {
         const rndSwitch = this.turnAngle === 0 ? Math.random() < 0.1 : Math.random() < 0.1
         if (rndSwitch) {
             const rnd = Math.random()
@@ -86,23 +96,47 @@ export class Ant {
             else
                 this.turnAngle = 0
         }
-            
-        this.dir.rotate(PIXI.DEG_TO_RAD * this.turnAngle * delta)
-        // this.turnAngle *= 0.01 * delta
+
+        this.dir.rotate(PIXI.DEG_TO_RAD * this.turnAngle * globals.simStep * this.individualSpeed)
 
         this.container.rotation = Math.atan2(this.dir.y, this.dir.x)
         const fwd = this.container.toGlobal(this.pointFwd)
+        const dist = distanceSqr(this.container.position.x, this.container.position.y, level.homeX, level.homeY)
+        const isHome = dist < globals.homeSize * globals.homeSize
+        if (isHome)
+            this.atHomeTimestamp = globals.gameTimeMs
 
-        const newPos = new PIXI.Point(this.container.position.x + this.dir.x * delta, this.container.position.y + this.dir.y * delta)
+        const newPos = new PIXI.Point(
+            this.container.position.x + this.dir.x * globals.simStep * this.individualSpeed,
+            this.container.position.y + this.dir.y * globals.simStep * this.individualSpeed)
+
         const s = collision.sample(fwd.x, fwd.y)
         if (s === 255) {
-            this.dir.x *= -1
-            this.dir.y *= -1
+            this.dir.x *= Math.random() * 0.8 - 1
+            this.dir.y *= Math.random() * 0.8 - 1
+            this.dir.normalise()
             return
         }
 
-        //console.log(fwd)
-        // console.log(`difX: ${this.sprite.position.x - fwd.x}, difY: ${this.sprite.position.y - fwd.y}`)
         this.container.position = newPos
+    }
+
+    private returnHome() {
+        this.explore()
+        const sample = collision.homeMarkers.sample(this.container.position.x, this.container.position.y)
+        console.log(sample)
+    }
+
+    public update() {
+        switch (this.state) {
+            case AntState.Exploring:
+                this.explore()
+                collision.homeMarkers.set(this.container.position.x, this.container.position.y, this.atHomeTimestamp)
+                break;
+
+            case AntState.ReturningHome:
+                this.returnHome()
+                break;
+        }
     }
 }

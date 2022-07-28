@@ -1,6 +1,19 @@
+import field from "./field"
 import globals from "./globals"
 
 class collision {
+    static homeMarkers: field = new field(
+        globals.markersW,
+        globals.markersH,
+        globals.homeDecayTime,
+        'homeMarkers')
+        
+    // static foodMarkers: field = new field(
+    //     globals.markersW,
+    //     globals.markersH,
+    //     globals.foodDecayTime,
+    //     'foodMarkers')
+
     static level: Uint8Array
 
     static sample(x: number, y: number): number {

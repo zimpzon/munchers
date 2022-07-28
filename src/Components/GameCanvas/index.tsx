@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import game from '../../Game/game';
+import globals from '../../Game/globals';
 
 function GameCanvas(): JSX.Element {
   useEffect(() => {
@@ -10,8 +11,23 @@ function GameCanvas(): JSX.Element {
     };
   }, []);
 
-  function tick(delta: number) {
-    game.updateAnts(delta);
+  let prev: number = 0
+
+  let cnt = 0.0
+
+  function tick() {
+    const now = Date.now()
+    let d = prev === 0 ? 1 : now - prev
+    d = Math.min(d, 50)
+    prev = now
+
+    cnt += d
+    while (cnt >= globals.simStepMs) {
+      cnt -= globals.simStepMs
+      globals.gameTimeMs += globals.simStepMs
+
+      game.tickGame();
+    }
   }
 
   return (

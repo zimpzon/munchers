@@ -13,22 +13,22 @@ function GameLoader(props: any): JSX.Element {
     loader.add('antDefault', 'gfx/ant.png');
     loader.add('level1Background', 'gfx/level1.png');
     loader.add('white_2x2', 'gfx/white_2x2.png');
+    loader.add('whiteCircle', 'gfx/white_circle.png');
 
     loader.load((_, resources: any) => {
       const levelData = getImageData('gfx/level1.png');
       const total = levelData.w * levelData.h;
 
       collision.level = new Uint8Array(total);
-      console.log(levelData.pixels.length);
-      console.log(levelData.w);
-      console.log(levelData.h);
       for (let idx = 0; idx < total * 4; idx += 4) {
         let a = levelData.pixels[idx + 3];
         collision.level[idx / 4] = a;
       }
 
+      sprites.whiteCircle = new PIXI.Sprite(resources.whiteCircle.texture)
       sprites.white_2x2 = new PIXI.Sprite(resources.white_2x2.texture);
       sprites.antDefault = new PIXI.Sprite(resources.antDefault.texture);
+      sprites.antDefault.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
       sprites.level1Background = new PIXI.Sprite(resources.level1Background.texture);
       sprites.level1Background.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
 
