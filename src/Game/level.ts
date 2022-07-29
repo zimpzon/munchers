@@ -7,10 +7,12 @@ import sprites from './sprites'
 export class level {
     static homeX: number = 0
     static homeY: number = 0
+    static foodX: number = 0
+    static foodY: number = 0
 
     backgroundSprite: PIXI.Sprite | undefined
-    homeDebugSprite: PIXI.Sprite | undefined
     homeCircleSprite: PIXI.Sprite | undefined
+    foodCircleSprite: PIXI.Sprite | undefined
 
     public loadLevel() {
         var levelDef = Level1
@@ -26,12 +28,23 @@ export class level {
         this.homeCircleSprite.height = globals.homeSize
         this.homeCircleSprite.tint = 0xa0c0a0
 
+        level.foodX = levelDef.homeX + 60
+        level.foodY = levelDef.homeY + 200
+        this.foodCircleSprite = new PIXI.Sprite(sprites.whiteCircle.texture)
+        this.foodCircleSprite.anchor.set(0.5, 0.5)
+        this.foodCircleSprite.x = level.foodX
+        this.foodCircleSprite.y = level.foodY
+        this.foodCircleSprite.width = globals.homeSize
+        this.foodCircleSprite.height = globals.homeSize
+        this.foodCircleSprite.tint = 0xa0a0f0
+
         level.homeX = levelDef.homeX
         level.homeY = levelDef.homeY
 
         game.app.stage.addChild(this.backgroundSprite);
         game.app.stage.addChild(this.homeCircleSprite);
-        game.app.stage.addChild(collision.homeMarkers.debugSprite);
+        game.app.stage.addChild(this.foodCircleSprite);
+        game.app.stage.addChild(collision.markers.sprite);
     }
 }
 

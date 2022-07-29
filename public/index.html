@@ -1,6 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <script id="markerShader" type="shader">
+      precision mediump float;
+      
+      uniform float gameTimeMs;
+      varying vec2 vTextureCoord;
+      uniform sampler2D uSampler;
+
+      void main() {
+        vec4 col = texture2D(uSampler, vTextureCoord);
+        col.a = col.r > 0.0 ? 0.1 : 0.0;
+        gl_FragColor = col;
+      }
+    </script>
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />

@@ -5,13 +5,15 @@ class globals {
     static collH: number = 600
     static markersW: number = 800
     static markersH: number = 600
-    static homeDecayTime: number = 1000 * 60 * 5
-    static foodDecayTime: number = 5000
+    static homeDecayTime: number = 1000 * 60
+    static foodDecayTime: number = 1000 * 60
     static gameTimeMs: number = 0
     static homeSize: number = 64
+    static homeRadius: number = this.homeSize * 0.5
     static simStepMs: number = 30
     static simFps: number = 1000 / this.simStepMs
     static simStep: number = 1 / this.simFps
+    static turbo: boolean = false
 }
 
 export default globals

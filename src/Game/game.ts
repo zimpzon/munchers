@@ -1,6 +1,5 @@
 import * as PIXI from 'pixi.js'
 import { Ant } from './ant';
-import collision from './collision';
 import globals from './globals';
 import { level } from './level';
 import { Soldier } from './soldier';
@@ -57,9 +56,6 @@ class game {
         for (let soldier of this.soldiers) {
             soldier.update()
         }
-
-        if (this.showHomeTrails)
-            collision.homeMarkers.updateDebug()
     }
 
     static addAnt() {
@@ -73,10 +69,10 @@ class game {
     }
 
     static recall() {
-        this.ants[0].recall()
-        // for (let ant of this.ants) {
-        //     ant.recall()
-        // }
+        // this.ants[0].recall()
+        for (let ant of this.ants) {
+            ant.recall()
+        }
 
         for (let soldier of this.soldiers) {
             soldier.recall()

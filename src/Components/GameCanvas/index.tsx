@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import collision from '../../Game/collision';
 import game from '../../Game/game';
 import globals from '../../Game/globals';
 
@@ -20,6 +21,8 @@ function GameCanvas(): JSX.Element {
     let d = prev === 0 ? 1 : now - prev
     d = Math.min(d, 50)
     prev = now
+    if (globals.turbo)
+      d *= 8
 
     cnt += d
     while (cnt >= globals.simStepMs) {
@@ -28,6 +31,9 @@ function GameCanvas(): JSX.Element {
 
       game.tickGame();
     }
+
+    // if (game.showHomeTrails)
+      collision.markers.updateDebug()
   }
 
   return (

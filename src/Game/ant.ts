@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js'
 import * as Vec2D from 'vector2d'
 import collision from './collision';
+import field, { sampleResult } from './field';
 import game from './game';
 import globals from './globals';
 import level from './level';
@@ -14,17 +15,16 @@ export class Ant {
     public dir: Vec2D.Vector
     container: PIXI.Container // A sprite is actually also a container, so no need for this parent container.
     scanFwd: PIXI.Sprite
-    scanLeft: PIXI.Sprite
-    scanRight: PIXI.Sprite
     pointFwd: PIXI.Point = new PIXI.Point()
-    pointLeft: PIXI.Point = new PIXI.Point()
-    pointRight: PIXI.Point = new PIXI.Point()
-    prefLeft: number = 0.4 - Math.random() * 0.15
-    prefRight: number = 0.4 - Math.random() * 0.15
+    prefLeft: number = 0.2
+    prefRight: number = 0.2
     turnAngle: number = 0
     individualSpeed: number = 50 + (Math.random() * 0.8 - 0.4)
     atHomeTimestamp: number = 0
+    atFoodTimestamp: number = 0
+    isAtHome: boolean = false
     state: AntState = AntState.Exploring
+    skip: number = 0
 
     constructor() {
         this.container = new PIXI.Container();
@@ -41,36 +41,14 @@ export class Ant {
 
         this.pointFwd.x = ant.width * 0.6
 
-        this.pointLeft.x = ant.width * 0.5
-        this.pointLeft.y = ant.height * -0.5
-
-        this.pointRight.x = ant.width * 0.5
-        this.pointRight.y = ant.height * 0.5
-
         const dotFwd = new PIXI.Sprite(sprites.white_2x2.texture)
         dotFwd.width = 2
         dotFwd.height = 2
         dotFwd.position = this.pointFwd
         dotFwd.anchor.set(0.5, 0.5)
         this.scanFwd = dotFwd
-
-        const dotLeft = new PIXI.Sprite(sprites.white_2x2.texture)
-        dotLeft.width = 2
-        dotLeft.height = 2
-        dotLeft.position = this.pointLeft
-        dotLeft.anchor.set(0.5, 0.5)
-        this.scanLeft = dotLeft
-        
-        const dotRight = new PIXI.Sprite(sprites.white_2x2.texture)
-        dotRight.width = 2
-        dotRight.height = 2
-        dotRight.position = this.pointRight
-        dotRight.anchor.set(0.5, 0.5)
-        this.scanRight = dotRight
-        
+      
         // this.container.addChild(dotFwd)
-        // this.container.addChild(dotLeft)
-        // this.container.addChild(dotRight)
 
         this.container.pivot.x = 0
         this.container.pivot.y = 0
@@ -80,30 +58,24 @@ export class Ant {
     }
 
     public recall() {
+        this.atFoodTimestamp = globals.gameTimeMs
         this.state = AntState.ReturningHome
-        // this.container.x = level.homeX
-        // this.container.y = level.homeY
+        this.container.addChild(this.scanFwd)
     }
 
-    private explore() {
-        const rndSwitch = this.turnAngle === 0 ? Math.random() < 0.1 : Math.random() < 0.1
-        if (rndSwitch) {
-            const rnd = Math.random()
-            if (rnd < this.prefLeft)
-                this.turnAngle = 3
-            else if (rnd > 1 - this.prefRight)
-                this.turnAngle = -3
-            else
-                this.turnAngle = 0
-        }
+    public unrecall() {
+        this.state = AntState.Exploring
+        this.container.removeChild(this.scanFwd)
+    }
 
+    private common() {
         this.dir.rotate(PIXI.DEG_TO_RAD * this.turnAngle * globals.simStep * this.individualSpeed)
 
         this.container.rotation = Math.atan2(this.dir.y, this.dir.x)
         const fwd = this.container.toGlobal(this.pointFwd)
         const dist = distanceSqr(this.container.position.x, this.container.position.y, level.homeX, level.homeY)
-        const isHome = dist < globals.homeSize * globals.homeSize
-        if (isHome)
+        this.isAtHome = dist < globals.homeRadius * globals.homeRadius
+        if (this.isAtHome)
             this.atHomeTimestamp = globals.gameTimeMs
 
         const newPos = new PIXI.Point(
@@ -121,22 +93,66 @@ export class Ant {
         this.container.position = newPos
     }
 
+    private explore() {
+        const rndSwitch = this.turnAngle === 0 ? Math.random() < 0.1 : Math.random() < 0.1
+        if (rndSwitch) {
+            const rnd = Math.random()
+            if (rnd < this.prefLeft)
+                this.turnAngle = 3
+            else if (rnd > 1 - this.prefRight)
+                this.turnAngle = -3
+            else
+                this.turnAngle = 0
+        }
+    }
+
+    sample: sampleResult = new sampleResult()
+
+    private followMarkers(): boolean {
+        // const fwd = this.container.toGlobal(this.pointFwd)
+
+        // const sampleFwd = collision.markers.sample(fwd.x, fwd.y, this.sample)
+
+        return false
+    }
+    
     private returnHome() {
-        this.explore()
-        const sample = collision.homeMarkers.sample(this.container.position.x, this.container.position.y)
-        console.log(sample)
+        if (this.isAtHome) {
+            this.unrecall()
+            return
+        }
+
+        if (!this.followMarkers())
+            this.explore()
     }
 
     public update() {
         switch (this.state) {
             case AntState.Exploring:
-                this.explore()
-                collision.homeMarkers.set(this.container.position.x, this.container.position.y, this.atHomeTimestamp)
+                if (!this.followMarkers()) {
+                    this.explore()
+                }
+                const dist = distanceSqr(this.container.position.x, this.container.position.y, level.foodX, level.foodY)
+                const isAtFood = dist < globals.homeRadius * globals.homeRadius
+                if (isAtFood) {
+                    this.dir.x *= -1
+                    this.dir.y *= -1
+                    this.recall()
+                }
+                else {
+                    if (++this.skip == 3) {
+                        this.skip = 0
+                        collision.markers.setHome(this.container.position.x, this.container.position.y, this.atHomeTimestamp)
+                    }
+                }
                 break;
 
             case AntState.ReturningHome:
                 this.returnHome()
+                collision.markers.setFood(this.container.position.x, this.container.position.y, this.atFoodTimestamp)
                 break;
         }
+
+        this.common()
     }
 }

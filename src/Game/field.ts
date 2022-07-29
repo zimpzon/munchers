@@ -1,6 +1,12 @@
 import * as PIXI from 'pixi.js'
 import globals from "./globals"
 
+export class sampleResult {
+    public x : number = 0
+    public y : number = 0
+    public max: number = 0
+}
+
 class field {
     values: number[]
     debug: Uint8Array
@@ -12,6 +18,7 @@ class field {
     scaleWorldToX: number
     scaleWorldToY: number
     name: string
+    isGreen: boolean
 
     constructor(w: number, h: number, decayMs: number, name: string) {
         this.values = new Array(w * h).fill(-10000000)
@@ -29,6 +36,7 @@ class field {
         this.debugSprite.x = 0
         this.debugSprite.y = 0
         this.name = name
+        this.isGreen = name === 'homeMarkers'
     }
 
     private calcIdx(worldX: number, worldY: number): number {
@@ -39,31 +47,48 @@ class field {
     }
 
     public updateDebug() {
+        const greenMul = this.isGreen ? 1 : 0
+        const blueMul = this.isGreen ? 0 : 1
+        
         for (let y = 0; y < this.h; ++y) {
             for (let x = 0; x < this.w; ++x) {
                 const idx = y * this.w + x
                 const val = this.values[idx]
                 const dbgIdx = idx * 4
                 const res = Math.max(0, (this.decayMs - (globals.gameTimeMs - val)))
+                const col = res > 0 ? 255 : 0
                 this.debug[dbgIdx + 0] = 0
-                this.debug[dbgIdx + 1] = res > 0 ? 255 : 0
-                this.debug[dbgIdx + 2] = 0
+                this.debug[dbgIdx + 1] = col * greenMul
+                this.debug[dbgIdx + 2] = col * blueMul
                 this.debug[dbgIdx + 3] = (res / this.decayMs) * 255 * 0.5
             }
         }
         this.debugTex.update()
     }
 
-    public sample(worldX: number, worldY: number): number {
+    public sample(worldX: number, worldY: number, result: sampleResult) {
         const idx = this.calcIdx(worldX, worldY)
-        const val = this.values[idx]
-        return Math.max(0, (this.decayMs - (globals.gameTimeMs - val)))
+        let max = -99999999999
+        const d = 4
+        for (let y = -d; y <= d; ++y) {
+            for (let x = -d; x <= d; ++x) {
+                const v = this.values[idx + y * this.w + x]
+                if (v > max) {
+                    result.x = x
+                    result.y = y
+                    max = v
+                }
+            }
+        }
+        result.max = max
+        return Math.max(0, (this.decayMs - (globals.gameTimeMs - max)))
     }
 
     public set(worldX: number, worldY: number, timestamp: number) {
         const idx = this.calcIdx(worldX, worldY)
-        if (timestamp > this.values[idx])
+        if (timestamp > this.values[idx]) {
             this.values[idx] = timestamp
+        }
     }
 }
 
