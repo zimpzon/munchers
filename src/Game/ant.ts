@@ -20,9 +20,8 @@ export class Ant {
     prefRight: number = 0.2
     turnAngle: number = 0
     individualSpeed: number = 50 + (Math.random() * 0.8 - 0.4)
-    atHomeTimestamp: number = 0
-    atFoodTimestamp: number = 0
     isAtHome: boolean = false
+    decayValue: number = 1.0
     state: AntState = AntState.Exploring
     skip: number = 0
 
@@ -52,13 +51,12 @@ export class Ant {
 
         this.container.pivot.x = 0
         this.container.pivot.y = 0
-        this.atHomeTimestamp = globals.gameTimeMs
 
         game.app.stage.addChild(this.container)
     }
 
     public recall() {
-        this.atFoodTimestamp = globals.gameTimeMs
+        this.decayValue = 1
         this.state = AntState.ReturningHome
         this.container.addChild(this.scanFwd)
     }
@@ -76,7 +74,7 @@ export class Ant {
         const dist = distanceSqr(this.container.position.x, this.container.position.y, level.homeX, level.homeY)
         this.isAtHome = dist < globals.homeRadius * globals.homeRadius
         if (this.isAtHome)
-            this.atHomeTimestamp = globals.gameTimeMs
+            this.decayValue = 1
 
         const newPos = new PIXI.Point(
             this.container.position.x + this.dir.x * globals.simStep * this.individualSpeed,
@@ -142,14 +140,14 @@ export class Ant {
                 else {
                     if (++this.skip == 3) {
                         this.skip = 0
-                        collision.markers.setHome(this.container.position.x, this.container.position.y, this.atHomeTimestamp)
+                        collision.homeMarkers.set(this.container.position.x, this.container.position.y, globals.gameTimeMs)
                     }
                 }
                 break;
 
             case AntState.ReturningHome:
                 this.returnHome()
-                collision.markers.setFood(this.container.position.x, this.container.position.y, this.atFoodTimestamp)
+                collision.foodMarkers.set(this.container.position.x, this.container.position.y, globals.gameTimeMs)
                 break;
         }
 

@@ -1,4 +1,6 @@
 import * as PIXI from 'pixi.js'
+import { BufferResource, SCALE_MODES } from 'pixi.js'
+import * as Custom from './CustomBufferResource'
 import globals from "./globals"
 
 export class sampleResult {
@@ -8,7 +10,8 @@ export class sampleResult {
 }
 
 class markers {
-    values: Float32Array
+    values: Int32Array
+    baseTex: PIXI.BaseTexture
     tex: PIXI.Texture
     sprite: PIXI.Sprite
     w: number
@@ -16,9 +19,10 @@ class markers {
     decayMs: number
     scaleWorldToX: number
     scaleWorldToY: number
+    uniforms: any
 
     constructor(w: number, h: number, decayMs: number) {
-        this.values = new Float32Array(w * h * 4).fill(-10000000)
+        this.values = new Int32Array(w * h)
         this.initValues()
 
         this.w = w
@@ -27,29 +31,40 @@ class markers {
         this.scaleWorldToX = w / globals.sceneW
         this.scaleWorldToY = h / globals.sceneH
 
-        this.tex = PIXI.Texture.fromBuffer(this.values, w, h)
-        this.tex.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST
-
+        // const resource = new Custom.CustomBufferResource(this.values, {
+        //     width: w,
+        //     height: h,
+        //     internalFormat: 'R32I',
+        //     format: 'RED',
+        //     type: 'INT'
+        //   })
+          
+        var b = new BufferResource(this.values, { width: w, height: h})
+        this.baseTex = new PIXI.BaseTexture(b, { scaleMode: PIXI.SCALE_MODES.NEAREST })
+        this.tex = new PIXI.Texture(this.baseTex)
+        
         this.sprite = new PIXI.Sprite(this.tex)
         this.sprite.width = globals.sceneW
         this.sprite.height = globals.sceneH
         this.sprite.x = 0
         this.sprite.y = 0
 
+        this.uniforms = {
+            gameTimeMs: 0,
+            decayTimeMs: decayMs
+        }
+
         const shaderCode = document.getElementById('markerShader') as HTMLScriptElement
         if (!shaderCode)
             throw new Error('shaderCode not found');
 
-        const markerFilter = new PIXI.Filter(undefined, shaderCode.innerText);
+        const markerFilter = new PIXI.Filter(undefined, shaderCode.innerText, this.uniforms);
         this.sprite.filters = [markerFilter]
     }
 
     private initValues() {
-        for (let i = 0; i < this.values.length; i += 4) {
-            this.values[i + 0] = -10000000
-            this.values[i + 1] = -10000000
-            this.values[i + 2] = -10000000
-            this.values[i + 3] = 1
+        for (let i = 0; i < this.values.length; i++) {
+            this.values[i] = 0
         }
     }
 
@@ -60,6 +75,7 @@ class markers {
     }
 
     public updateDebug() {
+        this.uniforms.gameTimeMs = globals.gameTimeMs
         this.tex.update()
     }
 
@@ -81,18 +97,9 @@ class markers {
         return Math.max(0, (this.decayMs - (globals.gameTimeMs - max)))
     }
 
-    public setHome(worldX: number, worldY: number, timestamp: number) {
-        const idx = this.calcIdx(worldX, worldY) * 4 + 1
-        if (timestamp > this.values[idx]) {
-            this.values[idx] = timestamp
-        }
-    }
-
-    public setFood(worldX: number, worldY: number, timestamp: number) {
-        const idx = this.calcIdx(worldX, worldY) * 4 + 2
-        if (timestamp > this.values[idx]) {
-            this.values[idx] = timestamp
-        }
+    public set(worldX: number, worldY: number, timestamp: number) {
+        const idx = this.calcIdx(worldX, worldY)
+        this.values[idx] = timestamp
     }
 }
 

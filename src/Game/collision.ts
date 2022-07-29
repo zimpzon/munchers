@@ -3,7 +3,12 @@ import globals from "./globals"
 import markers from "./markers"
 
 class collision {
-    static markers: markers = new markers(
+    static foodMarkers: markers = new markers(
+        globals.markersW,
+        globals.markersH,
+        globals.homeDecayTime)
+
+    static homeMarkers: markers = new markers(
         globals.markersW,
         globals.markersH,
         globals.homeDecayTime)

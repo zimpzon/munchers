@@ -44,7 +44,7 @@ export class level {
         game.app.stage.addChild(this.backgroundSprite);
         game.app.stage.addChild(this.homeCircleSprite);
         game.app.stage.addChild(this.foodCircleSprite);
-        game.app.stage.addChild(collision.markers.sprite);
+        game.app.stage.addChild(collision.homeMarkers.sprite);
     }
 }
 

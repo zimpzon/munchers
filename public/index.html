@@ -2,15 +2,20 @@
 <html lang="en">
   <head>
     <script id="markerShader" type="shader">
-      precision mediump float;
+      precision highp float;
       
       uniform float gameTimeMs;
+      uniform float decayTimeMs;
+      
       varying vec2 vTextureCoord;
       uniform sampler2D uSampler;
 
       void main() {
         vec4 col = texture2D(uSampler, vTextureCoord);
-        col.a = col.r > 0.0 ? 0.1 : 0.0;
+        col.g = col.r;
+        col.r = 0.0;
+        col.a = col.g > 0.0 ? 0.2 : 0.2;
+
         gl_FragColor = col;
       }
     </script>

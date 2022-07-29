@@ -12,28 +12,26 @@ function GameCanvas(): JSX.Element {
     };
   }, []);
 
-  let prev: number = 0
+  let prev: number = 0;
 
-  let cnt = 0.0
+  let cnt = 0.0;
 
   function tick() {
-    const now = Date.now()
-    let d = prev === 0 ? 1 : now - prev
-    d = Math.min(d, 50)
-    prev = now
-    if (globals.turbo)
-      d *= 8
+    const now = Date.now();
+    let d = prev === 0 ? 1 : now - prev;
+    d = Math.min(d, 50);
+    prev = now;
+    if (globals.turbo) d *= 8;
 
-    cnt += d
+    cnt += d;
     while (cnt >= globals.simStepMs) {
-      cnt -= globals.simStepMs
-      globals.gameTimeMs += globals.simStepMs
+      cnt -= globals.simStepMs;
+      globals.gameTimeMs += globals.simStepMs;
 
       game.tickGame();
     }
 
-    // if (game.showHomeTrails)
-      collision.markers.updateDebug()
+    collision.homeMarkers.updateDebug();
   }
 
   return (
