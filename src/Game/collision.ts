@@ -6,7 +6,7 @@ class collision {
     static foodMarkers: markers = new markers(
         globals.markersW,
         globals.markersH,
-        globals.homeDecayTime)
+        globals.foodDecayTime)
 
     static homeMarkers: markers = new markers(
         globals.markersW,

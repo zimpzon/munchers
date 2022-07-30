@@ -1,5 +1,4 @@
 import * as PIXI from 'pixi.js'
-import { BufferResource, SCALE_MODES } from 'pixi.js'
 import * as Custom from './CustomBufferResource'
 import globals from "./globals"
 
@@ -10,7 +9,7 @@ export class sampleResult {
 }
 
 class markers {
-    values: Int32Array
+    values: Float32Array
     baseTex: PIXI.BaseTexture
     tex: PIXI.Texture
     sprite: PIXI.Sprite
@@ -22,7 +21,7 @@ class markers {
     uniforms: any
 
     constructor(w: number, h: number, decayMs: number) {
-        this.values = new Int32Array(w * h)
+        this.values = new Float32Array(w * h)
         this.initValues()
 
         this.w = w
@@ -31,16 +30,16 @@ class markers {
         this.scaleWorldToX = w / globals.sceneW
         this.scaleWorldToY = h / globals.sceneH
 
-        // const resource = new Custom.CustomBufferResource(this.values, {
-        //     width: w,
-        //     height: h,
-        //     internalFormat: 'R32I',
-        //     format: 'RED',
-        //     type: 'INT'
-        //   })
-          
-        var b = new BufferResource(this.values, { width: w, height: h})
-        this.baseTex = new PIXI.BaseTexture(b, { scaleMode: PIXI.SCALE_MODES.NEAREST })
+        const resource = new Custom.CustomBufferResource(this.values, {
+            width: w,
+            height: h,
+            internalFormat: 'R32F',
+            format: 'RED',
+            type: 'FLOAT'
+          })
+        
+        // var b = new BufferResource(this.values, { width: w, height: h})
+        this.baseTex = new PIXI.BaseTexture(resource, { scaleMode: PIXI.SCALE_MODES.NEAREST })
         this.tex = new PIXI.Texture(this.baseTex)
         
         this.sprite = new PIXI.Sprite(this.tex)
@@ -58,13 +57,18 @@ class markers {
         if (!shaderCode)
             throw new Error('shaderCode not found');
 
+        this.sprite.blendMode = PIXI.BLEND_MODES.NONE
         const markerFilter = new PIXI.Filter(undefined, shaderCode.innerText, this.uniforms);
-        this.sprite.filters = [markerFilter]
+        const a = new PIXI.filters.AlphaFilter();
+        this.sprite.filters = [markerFilter, a]
+
+        // var p = new PIXI.SimplePlane(this.tex)
+        // p.shader
     }
 
     private initValues() {
         for (let i = 0; i < this.values.length; i++) {
-            this.values[i] = 0
+            this.values[i] = -1
         }
     }
 

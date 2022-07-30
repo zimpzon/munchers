@@ -3,21 +3,20 @@
   <head>
     <script id="markerShader" type="shader">
       precision highp float;
-      
+      precision highp sampler2D;
+
       uniform float gameTimeMs;
-      uniform float decayTimeMs;
-      
+
       varying vec2 vTextureCoord;
-      uniform sampler2D uSampler;
+      uniform sampler2D uTexture;
 
       void main() {
-        vec4 col = texture2D(uSampler, vTextureCoord);
-        col.g = col.r;
-        col.r = 0.0;
-        col.a = col.g > 0.0 ? 0.2 : 0.2;
-
-        gl_FragColor = col;
+        vec4 c = texture2D(uTexture, vTextureCoord);
+        float a = (10000.0 + (c.r - gameTimeMs)) / 10000.0;
+        c.a = c.r < 0.0 ? 0.0 : a;
+        gl_FragColor = c;
       }
+
     </script>
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />

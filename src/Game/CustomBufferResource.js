@@ -28,7 +28,7 @@ export class CustomBufferResource extends PIXI.Resource {
 
     glTexture.width = baseTexture.width;
     glTexture.height = baseTexture.height;
-
+    
     gl.texImage2D(
       baseTexture.target,
       0,
