@@ -6,7 +6,7 @@ class globals {
     static markersW: number = 800
     static markersH: number = 600
     static homeDecayTime: number = 10000
-    static foodDecayTime: number = 10000
+    static foodDecayTime: number = 5000
     static homeMarkerModulus: number = 1
     static foodMarkerModulus: number = 1
     static homeScanModulus: number = 3

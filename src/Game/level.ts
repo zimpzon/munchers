@@ -10,6 +10,7 @@ export class level {
     static phase: Phase
     static home1: Home
     static food1: Food
+    static food2: Food
 
     backgroundSprite: PIXI.Sprite | undefined
     foodCircleSprite: PIXI.Sprite | undefined
@@ -79,10 +80,10 @@ export class level {
         game.app.stage.addChild(collision.homeMarkers.sprite);
 
         level.home1 = createHome(580, 120, 30)
-        // level.food1 = createFood(580, 250, 30, 10000)
-        level.food1 = createFood(380, 250, 30, 10000)
+        level.food1 = createFood(670, 740, 30, 1000)
+        level.food2 = createFood(380, 400, 30, 1000)
         level.homes = [level.home1]
-        level.foods = [level.food1]
+        level.foods = [level.food1, level.food2]
     }
 }
 

@@ -150,6 +150,9 @@ export class Ant {
             this.state.motivationState = MotivationState.lookForFood
             this.scanFwd.width = 0
             this.scanFwd.height = 0
+            const vec = new Vector(this.state.dirX *= Math.random() * 0.8 - 1, this.state.dirY *= Math.random() * 0.8 - 1)
+            vec.normalise()
+            this.SetDir(vec)
             game.addMoney(1)
             return
         }
@@ -192,10 +195,10 @@ export class Ant {
     }
 
     private common() {
-        if (this.state.motivationState === MotivationState.deliverFood || this.state.motivationState === MotivationState.lookForFood) {
-            if (Math.random() < 0.002) // 33 checks per second
-                this.autonomousEnd = globals.gameTimeMs + 1000
-        }
+        // if (this.state.motivationState === MotivationState.deliverFood || this.state.motivationState === MotivationState.lookForFood) {
+        //     if (Math.random() < 0.001) // 33 checks per second
+        //         this.autonomousEnd = globals.gameTimeMs + 1000
+        // }
 
         const vec = this.getDirVec()
         vec.rotate(PIXI.DEG_TO_RAD * this.turnAngle * globals.simStep * this.individualSpeed)
