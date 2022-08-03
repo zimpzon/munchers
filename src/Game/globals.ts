@@ -5,10 +5,10 @@ class globals {
     static collH: number = 600
     static markersW: number = 800
     static markersH: number = 600
-    static homeDecayTime: number = 1000
-    static foodDecayTime: number = 1000
-    static homeMarkerModulus: number = 3
-    static foodMarkerModulus: number = 3
+    static homeDecayTime: number = 10000
+    static foodDecayTime: number = 10000
+    static homeMarkerModulus: number = 1
+    static foodMarkerModulus: number = 1
     static homeScanModulus: number = 3
     static foodScanModulus: number = 10
     static gameTimeMs: number = 0

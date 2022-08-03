@@ -17,9 +17,9 @@ class GameState implements IGameState {
     phaseIdx: number = 0
     antStates: IAntState[] = []
     money: number = 1
-    homeScentMax: number = 5000
-    foodScentMax: number = 5000
-    pickupFoodMs: number = 3000
+    homeScentMax: number = globals.homeDecayTime
+    foodScentMax: number = globals.foodDecayTime
+    pickupFoodMs: number = 2000
 }
 
 class game {
@@ -31,7 +31,7 @@ class game {
     static ants: Ant[] = []
 
     static antBuyPrice(count: number): number {
-        return 1;
+        return 0;
     }
 
     static stop() {

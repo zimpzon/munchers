@@ -20,12 +20,16 @@ class collision {
         static level_phase3: Uint8Array
         static level_phase4: Uint8Array
 
-    static sample(x: number, y: number): number {
-        const worldToCollScaleX = globals.collW / globals.sceneW
-        const worldToCollScaleY = globals.collH / globals.sceneH
-        const sampleX = Math.round(x * worldToCollScaleX)
-        const sampleY = Math.round(y * worldToCollScaleY)
-        const idx = sampleY * globals.collW + sampleX
+        static sample(x: number, y: number): number {
+            const worldToCollScaleX = globals.collW / globals.sceneW
+            const worldToCollScaleY = globals.collH / globals.sceneH
+            const sampleX = Math.round(x * worldToCollScaleX)
+            const sampleY = Math.round(y * worldToCollScaleY)
+            return this.sampleLocalCoord(sampleX, sampleY)
+        }
+
+        static sampleLocalCoord(x: number, y: number): number {
+        const idx = y * globals.collW + x
         const val = this.level[idx]
         return val
     }

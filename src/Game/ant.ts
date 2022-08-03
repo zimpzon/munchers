@@ -4,7 +4,7 @@ import collision from './collision';
 import game from './game';
 import globals from './globals';
 import level from './level';
-import { sampleResult } from './markers';
+import markers, { sampleResult } from './markers';
 import sprites from './sprites';
 
 export enum MotivationState {
@@ -34,12 +34,16 @@ export class Ant {
     prefLeft: number = 0.2
     prefRight: number = 0.2
     turnAngle: number = 0
-    individualSpeed: number = 50
+    individualSpeed: number = 120
     skip: number = 0
     state: IAntState
-    sugarSize: number = 3
+    sugarSize: number = 2
     foodScanId: number
     homeScanId: number
+    prevIdxHomeSet: number = -1
+    prevIdxFoodSet: number = -1
+    autonomousEnd: number = -1
+    latestMarkersSample: sampleResult = new sampleResult()
 
     // Globals initialized in top of update()
     isOnHome: boolean = false
@@ -64,7 +68,7 @@ export class Ant {
         dotFwd.height = state.motivationState === MotivationState.deliverFood ? this.sugarSize : 0
         dotFwd.position = this.pointFwd
         dotFwd.anchor.set(0.5, 0.5)
-        dotFwd.tint = 0x10ffff
+        dotFwd.tint = 0x10edef
         this.scanFwd = dotFwd
         this.container.addChild(this.scanFwd)
       
@@ -86,41 +90,16 @@ export class Ant {
         this.state.dirY = vec.y
     }
 
-    private common() {
-        const vec = this.getDirVec()
-        vec.rotate(PIXI.DEG_TO_RAD * this.turnAngle * globals.simStep * this.individualSpeed)
-        this.SetDir(vec)
-
-        this.container.rotation = Math.atan2(this.state.dirY, this.state.dirX)
-        const fwd = this.container.toGlobal(this.pointFwd)
-
-        const newPos = new PIXI.Point(
-            this.container.position.x + this.state.dirX * globals.simStep * this.individualSpeed,
-            this.container.position.y + this.state.dirY * globals.simStep * this.individualSpeed)
-
-        const s = collision.sample(fwd.x, fwd.y)
-        if (s === 255) {
-            const vec = new Vector(this.state.dirX *= Math.random() * 0.8 - 1, this.state.dirY *= Math.random() * 0.8 - 1)
-            vec.normalise()
-            this.SetDir(vec)
-            return
-        }
-
-        this.container.position = newPos
-        if (this.isOnHome)
-        {
-            this.state.homeScent = game.gameState.homeScentMax
-        }
-    }
-
     private lookForFood() {
         if (globals.updateCounter % globals.homeMarkerModulus === 0)
-            collision.homeMarkers.set(
+            this.prevIdxHomeSet = collision.homeMarkers.set(
                 this.state.posX,
                 this.state.posY,
                 this.state.homeScent,
-                this.state.dirX,
-                this.state.dirY)
+                this.prevIdxHomeSet)
+
+        this.sample(collision.foodMarkers)
+        this.explore(1)
 
         if (globals.updateCounter % globals.foodScanModulus !== this.foodScanId)
             return
@@ -135,20 +114,36 @@ export class Ant {
             this.SetDir(vec)
             return
         }
-
-        this.explore(globals.foodScanModulus)
     }
 
-    latestHomeMarkersSample: sampleResult = new sampleResult()
+    private pickingUpFood() {
+        if (globals.gameTimeMs > this.state.pickUpFoodStartMs + game.gameState.pickupFoodMs) {
+            const food = level.isOnFood(this.state.posX, this.state.posY)
+            if (food === null) {
+                this.state.motivationState = MotivationState.lookForFood
+                return
+            }
 
-    private deliverFood() {
-        if (globals.updateCounter % globals.foodMarkerModulus === 0) {
-            collision.foodMarkers.set(
+            this.prevIdxFoodSet = collision.foodMarkers.set(
                 this.state.posX,
                 this.state.posY,
                 this.state.foodScent,
-                this.state.dirX,
-                this.state.dirY)
+                this.prevIdxFoodSet)
+
+            this.state.motivationState = MotivationState.deliverFood
+            this.scanFwd.width = this.sugarSize
+            this.scanFwd.height = this.sugarSize
+            food.claim()
+        }
+    }
+
+    private deliverFood() {
+        if (globals.updateCounter % globals.foodMarkerModulus === 0) {
+            this.prevIdxFoodSet = collision.foodMarkers.set(
+                this.state.posX,
+                this.state.posY,
+                this.state.foodScent,
+                this.prevIdxFoodSet)
         }
 
         if (this.isOnHome) {
@@ -159,12 +154,28 @@ export class Ant {
             return
         }
 
-        collision.homeMarkers.sample(this.scanFwd.position.x, this.scanFwd.position.y, this.latestHomeMarkersSample)
-        // Y no match??
-        if (this.latestHomeMarkersSample.success === true)
-            console.log(this.latestHomeMarkersSample.markerX)
+        this.sample(collision.homeMarkers)
 
         this.explore(1)
+    }
+
+    private sample(markers: markers) {
+        if (globals.gameTimeMs < this.autonomousEnd)
+            return
+
+        const fwd = this.container.toGlobal(this.scanFwd)
+        markers.sample(fwd.x, fwd.y, this.latestMarkersSample)
+        if (this.latestMarkersSample.success === true) {
+            
+            const coll = collision.sample(this.latestMarkersSample.targetX, this.latestMarkersSample.targetY)
+            if (coll === 255)
+                return
+
+            const dir = new Vector(this.latestMarkersSample.targetX - this.state.posX, this.latestMarkersSample.targetY - this.state.posY)
+            dir.normalise()
+            this.SetDir(dir)
+            this.latestMarkersSample.success = false
+        }
     }
 
     private explore(modulus: number) {
@@ -180,19 +191,39 @@ export class Ant {
         }
     }
 
-    private pickingUpFood() {
-        if (globals.gameTimeMs > this.state.pickUpFoodStartMs + game.gameState.pickupFoodMs) {
-            const food = level.isOnFood(this.state.posX, this.state.posY)
-            if (food === null) {
-                this.state.motivationState = MotivationState.lookForFood
-                console.log('lost food')
-                return
-            }
+    private common() {
+        if (this.state.motivationState === MotivationState.deliverFood || this.state.motivationState === MotivationState.lookForFood) {
+            if (Math.random() < 0.002) // 33 checks per second
+                this.autonomousEnd = globals.gameTimeMs + 1000
+        }
 
-            this.state.motivationState = MotivationState.deliverFood
-            this.scanFwd.width = this.sugarSize
-            this.scanFwd.height = this.sugarSize
-            food.claim()
+        const vec = this.getDirVec()
+        vec.rotate(PIXI.DEG_TO_RAD * this.turnAngle * globals.simStep * this.individualSpeed)
+        this.SetDir(vec)
+        this.container.rotation = Math.atan2(this.state.dirY, this.state.dirX)
+
+        this.state.homeScent = Math.max(0, this.state.homeScent - globals.simStepMs / 2)
+        this.state.foodScent = Math.max(0, this.state.foodScent - globals.simStepMs / 2)
+
+        const fwd = this.container.toGlobal(this.pointFwd)
+
+        const newPos = new PIXI.Point(
+            this.container.position.x + this.state.dirX * globals.simStep * this.individualSpeed,
+            this.container.position.y + this.state.dirY * globals.simStep * this.individualSpeed)
+
+        const s = collision.sample(fwd.x, fwd.y)
+        if (s === 255) {
+            const vec = new Vector(this.state.dirX *= Math.random() * 0.8 - 1, this.state.dirY *= Math.random() * 0.8 - 1)
+            vec.normalise()
+            this.SetDir(vec)
+            return
+        }
+    
+        this.container.position = newPos
+
+        if (this.isOnHome)
+        {
+            this.state.homeScent = game.gameState.homeScentMax
         }
     }
 
