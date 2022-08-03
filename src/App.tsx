@@ -1,12 +1,23 @@
 import './App.css'
-import ControlsTop from './Components/ControlsTop'
+import GameControls from './Components/GameControls'
 import GameCanvas from './Components/GameCanvas'
+import Container from 'react-bootstrap/Container'
+import Row from 'react-bootstrap/Row'
+import Col from 'react-bootstrap/Col'
 
 function App() {
   return (
     <div className='App'>
-      <ControlsTop />
-      <GameCanvas />
+      <Container>
+        <Row>
+          <Col>
+            <GameControls />
+          </Col>
+          <Col>
+            <GameCanvas />
+          </Col>
+        </Row>
+      </Container>
     </div>
   )
 }

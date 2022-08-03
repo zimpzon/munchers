@@ -1,4 +1,3 @@
-import field from "./field"
 import globals from "./globals"
 import markers from "./markers"
 
@@ -6,14 +5,20 @@ class collision {
     static foodMarkers: markers = new markers(
         globals.markersW,
         globals.markersH,
-        globals.foodDecayTime)
+        globals.foodDecayTime,
+        false)
 
     static homeMarkers: markers = new markers(
         globals.markersW,
         globals.markersH,
-        globals.homeDecayTime)
+        globals.homeDecayTime,
+        true)
 
-    static level: Uint8Array
+        static level: Uint8Array
+        static level_phase1: Uint8Array
+        static level_phase2: Uint8Array
+        static level_phase3: Uint8Array
+        static level_phase4: Uint8Array
 
     static sample(x: number, y: number): number {
         const worldToCollScaleX = globals.collW / globals.sceneW

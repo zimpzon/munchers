@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import * as PIXI from 'pixi.js';
 import sprites from './../../Game/sprites';
 import collision from '../../Game/collision';
+import level from '../../Game/level';
 
 function GameLoader(props: any): JSX.Element {
   const [loadingComplete, setLoadingComplete] = useState(false);
@@ -11,34 +12,27 @@ function GameLoader(props: any): JSX.Element {
 
     const loader = new PIXI.Loader();
     loader.add('antDefault', 'gfx/ant.png');
-    loader.add('level1Background', 'gfx/level1.png');
+    loader.add('level1Background', 'gfx/level1_phase1.png');
     loader.add('white_2x2', 'gfx/white_2x2.png');
     loader.add('whiteCircle', 'gfx/white_circle.png');
+    loader.add('homeIcon', 'gfx/home.png');
 
     loader.load((_, resources: any) => {
-      const levelData = getImageData('gfx/level1.png');
-      const total = levelData.w * levelData.h;
 
-      collision.level = new Uint8Array(total);
-      for (let idx = 0; idx < total * 4; idx += 4) {
-        let a = levelData.pixels[idx + 3];
-        collision.level[idx / 4] = a;
-      }
+      const imgData1 = getImageData('gfx/level1_phase1.png');
+      collision.level_phase1 = level.loadCollisionMap(imgData1)
 
       sprites.whiteCircle = new PIXI.Sprite(resources.whiteCircle.texture)
       sprites.white_2x2 = new PIXI.Sprite(resources.white_2x2.texture);
+
       sprites.antDefault = new PIXI.Sprite(resources.antDefault.texture);
       sprites.antDefault.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
+
       sprites.level1Background = new PIXI.Sprite(resources.level1Background.texture);
       sprites.level1Background.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
 
-      // const buf = new Uint8Array(800 * 600 * 4);
-      // for (let idx = 0; idx < buf.length; idx += 4) {
-      //   buf[idx + 1] = collision.level[idx / 4] / 2;
-      //   buf[idx + 3] = 255;
-      // }
-      // var tex = PIXI.Texture.fromBuffer(buf, 800, 600);
-      // sprites.level1Background = new PIXI.Sprite(tex);
+      sprites.homeIcon = new PIXI.Sprite(resources.homeIcon.texture);
+      sprites.homeIcon.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
 
       console.log('Loading complete.');
 

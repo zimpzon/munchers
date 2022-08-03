@@ -5,15 +5,23 @@
       precision highp float;
       precision highp sampler2D;
 
-      uniform float gameTimeMs;
+      uniform highp float gameTimeMs;
+      uniform highp float decayTimeMs;
+      uniform highp float mulR;
+      uniform highp float mulG;
+      uniform highp float mulB;
 
       varying vec2 vTextureCoord;
       uniform sampler2D uTexture;
 
       void main() {
         vec4 c = texture2D(uTexture, vTextureCoord);
-        float a = (10000.0 + (c.r - gameTimeMs)) / 10000.0;
-        c.a = c.r < 0.0 ? 0.0 : a;
+        highp float val = (c.r - gameTimeMs) / decayTimeMs;
+        val = clamp(val, 0.0, 1.0);
+        val = val * val;
+        c.r = mulR * val;
+        c.g = mulG * val;
+        c.b = mulB * val;
         gl_FragColor = c;
       }
 

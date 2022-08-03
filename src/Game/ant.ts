@@ -1,98 +1,174 @@
 import * as PIXI from 'pixi.js'
-import * as Vec2D from 'vector2d'
+import { Vector } from 'vector2d';
 import collision from './collision';
-import field, { sampleResult } from './field';
 import game from './game';
 import globals from './globals';
 import level from './level';
-import * as MathUtil from './math';
+import { sampleResult } from './markers';
 import sprites from './sprites';
-import { distanceSqr } from './util';
 
-enum AntState { Exploring, ReturningHome }
+export enum MotivationState {
+    lookForFood,
+    pickingUpFood,
+    deliverFood
+}
+
+export interface IAntState {
+    motivationState: MotivationState,
+    posX: number,
+    posY: number,
+    dirX: number,
+    dirY: number,
+    homeScent: number,
+    foodScent: number,
+    pickUpFoodStartMs: number,
+}
 
 export class Ant {
-    public dir: Vec2D.Vector
+    public static counter: number = 0
+    id: number = Ant.counter++
+
     container: PIXI.Container // A sprite is actually also a container, so no need for this parent container.
     scanFwd: PIXI.Sprite
     pointFwd: PIXI.Point = new PIXI.Point()
     prefLeft: number = 0.2
     prefRight: number = 0.2
     turnAngle: number = 0
-    individualSpeed: number = 50 + (Math.random() * 0.8 - 0.4)
-    isAtHome: boolean = false
-    decayValue: number = 1.0
-    state: AntState = AntState.Exploring
+    individualSpeed: number = 50
     skip: number = 0
+    state: IAntState
+    sugarSize: number = 3
+    foodScanId: number
+    homeScanId: number
 
-    constructor() {
+    // Globals initialized in top of update()
+    isOnHome: boolean = false
+
+    constructor(state: IAntState) {
+        this.state = state
         this.container = new PIXI.Container();
-        this.container.x = level.homeX
-        this.container.y = level.homeY;
+        this.container.x = state.posX
+        this.container.y = state.posY
 
         const ant = new PIXI.Sprite(sprites.antDefault.texture)
         ant.tint = 0xffffff
-        ant.width = 8
-        ant.height = 8
+        ant.width = 10
+        ant.height = 10
         ant.anchor.set(0.5, 0.5)
-        this.dir = MathUtil.RandomUnitVector()
         this.container.addChild(ant)
 
         this.pointFwd.x = ant.width * 0.6
 
         const dotFwd = new PIXI.Sprite(sprites.white_2x2.texture)
-        dotFwd.width = 2
-        dotFwd.height = 2
+        dotFwd.width = state.motivationState === MotivationState.deliverFood ? this.sugarSize : 0
+        dotFwd.height = state.motivationState === MotivationState.deliverFood ? this.sugarSize : 0
         dotFwd.position = this.pointFwd
         dotFwd.anchor.set(0.5, 0.5)
+        dotFwd.tint = 0x10ffff
         this.scanFwd = dotFwd
+        this.container.addChild(this.scanFwd)
       
-        // this.container.addChild(dotFwd)
-
         this.container.pivot.x = 0
         this.container.pivot.y = 0
+
+        this.foodScanId = this.id % globals.foodScanModulus
+        this.homeScanId = this.id % globals.homeScanModulus
 
         game.app.stage.addChild(this.container)
     }
 
-    public recall() {
-        this.decayValue = 1
-        this.state = AntState.ReturningHome
-        this.container.addChild(this.scanFwd)
+    private getDirVec(): Vector {
+        return new Vector(this.state.dirX, this.state.dirY)
     }
 
-    public unrecall() {
-        this.state = AntState.Exploring
-        this.container.removeChild(this.scanFwd)
+    private SetDir(vec: Vector) {
+        this.state.dirX = vec.x
+        this.state.dirY = vec.y
     }
 
     private common() {
-        this.dir.rotate(PIXI.DEG_TO_RAD * this.turnAngle * globals.simStep * this.individualSpeed)
+        const vec = this.getDirVec()
+        vec.rotate(PIXI.DEG_TO_RAD * this.turnAngle * globals.simStep * this.individualSpeed)
+        this.SetDir(vec)
 
-        this.container.rotation = Math.atan2(this.dir.y, this.dir.x)
+        this.container.rotation = Math.atan2(this.state.dirY, this.state.dirX)
         const fwd = this.container.toGlobal(this.pointFwd)
-        const dist = distanceSqr(this.container.position.x, this.container.position.y, level.homeX, level.homeY)
-        this.isAtHome = dist < globals.homeRadius * globals.homeRadius
-        if (this.isAtHome)
-            this.decayValue = 1
 
         const newPos = new PIXI.Point(
-            this.container.position.x + this.dir.x * globals.simStep * this.individualSpeed,
-            this.container.position.y + this.dir.y * globals.simStep * this.individualSpeed)
+            this.container.position.x + this.state.dirX * globals.simStep * this.individualSpeed,
+            this.container.position.y + this.state.dirY * globals.simStep * this.individualSpeed)
 
         const s = collision.sample(fwd.x, fwd.y)
         if (s === 255) {
-            this.dir.x *= Math.random() * 0.8 - 1
-            this.dir.y *= Math.random() * 0.8 - 1
-            this.dir.normalise()
+            const vec = new Vector(this.state.dirX *= Math.random() * 0.8 - 1, this.state.dirY *= Math.random() * 0.8 - 1)
+            vec.normalise()
+            this.SetDir(vec)
             return
         }
 
         this.container.position = newPos
+        if (this.isOnHome)
+        {
+            this.state.homeScent = game.gameState.homeScentMax
+        }
     }
 
-    private explore() {
-        const rndSwitch = this.turnAngle === 0 ? Math.random() < 0.1 : Math.random() < 0.1
+    private lookForFood() {
+        if (globals.updateCounter % globals.homeMarkerModulus === 0)
+            collision.homeMarkers.set(
+                this.state.posX,
+                this.state.posY,
+                this.state.homeScent,
+                this.state.dirX,
+                this.state.dirY)
+
+        if (globals.updateCounter % globals.foodScanModulus !== this.foodScanId)
+            return
+
+        const food = level.isOnFood(this.state.posX, this.state.posY)
+        if (food !== null) {
+            this.state.foodScent = game.gameState.foodScentMax
+            this.state.motivationState = MotivationState.pickingUpFood
+            this.state.pickUpFoodStartMs = globals.gameTimeMs
+            const vec = new Vector(this.state.dirX *= Math.random() * 0.8 - 1, this.state.dirY *= Math.random() * 0.8 - 1)
+            vec.normalise()
+            this.SetDir(vec)
+            return
+        }
+
+        this.explore(globals.foodScanModulus)
+    }
+
+    latestHomeMarkersSample: sampleResult = new sampleResult()
+
+    private deliverFood() {
+        if (globals.updateCounter % globals.foodMarkerModulus === 0) {
+            collision.foodMarkers.set(
+                this.state.posX,
+                this.state.posY,
+                this.state.foodScent,
+                this.state.dirX,
+                this.state.dirY)
+        }
+
+        if (this.isOnHome) {
+            this.state.motivationState = MotivationState.lookForFood
+            this.scanFwd.width = 0
+            this.scanFwd.height = 0
+            game.addMoney(1)
+            return
+        }
+
+        collision.homeMarkers.sample(this.scanFwd.position.x, this.scanFwd.position.y, this.latestHomeMarkersSample)
+        // Y no match??
+        if (this.latestHomeMarkersSample.success === true)
+            console.log(this.latestHomeMarkersSample.markerX)
+
+        this.explore(1)
+    }
+
+    private explore(modulus: number) {
+        const rndSwitch = Math.random() / modulus < 0.1
         if (rndSwitch) {
             const rnd = Math.random()
             if (rnd < this.prefLeft)
@@ -104,53 +180,36 @@ export class Ant {
         }
     }
 
-    sample: sampleResult = new sampleResult()
+    private pickingUpFood() {
+        if (globals.gameTimeMs > this.state.pickUpFoodStartMs + game.gameState.pickupFoodMs) {
+            const food = level.isOnFood(this.state.posX, this.state.posY)
+            if (food === null) {
+                this.state.motivationState = MotivationState.lookForFood
+                console.log('lost food')
+                return
+            }
 
-    private followMarkers(): boolean {
-        // const fwd = this.container.toGlobal(this.pointFwd)
-
-        // const sampleFwd = collision.markers.sample(fwd.x, fwd.y, this.sample)
-
-        return false
-    }
-    
-    private returnHome() {
-        if (this.isAtHome) {
-            this.unrecall()
-            return
+            this.state.motivationState = MotivationState.deliverFood
+            this.scanFwd.width = this.sugarSize
+            this.scanFwd.height = this.sugarSize
+            food.claim()
         }
-
-        if (!this.followMarkers())
-            this.explore()
     }
 
     public update() {
-        switch (this.state) {
-            case AntState.Exploring:
-                if (!this.followMarkers()) {
-                    this.explore()
-                }
-                const dist = distanceSqr(this.container.position.x, this.container.position.y, level.foodX, level.foodY)
-                const isAtFood = dist < globals.homeRadius * globals.homeRadius
-                if (isAtFood) {
-                    this.dir.x *= -1
-                    this.dir.y *= -1
-                    this.recall()
-                }
-                else {
-                    if (++this.skip == 3) {
-                        this.skip = 0
-                        collision.homeMarkers.set(this.container.position.x, this.container.position.y, globals.gameTimeMs)
-                    }
-                }
-                break;
+        this.state.posX = this.container.position.x
+        this.state.posY = this.container.position.y
+        this.isOnHome = level.isOnHome(this.state.posX, this.state.posY)
 
-            case AntState.ReturningHome:
-                this.returnHome()
-                collision.foodMarkers.set(this.container.position.x, this.container.position.y, globals.gameTimeMs)
-                break;
+        if (this.state.motivationState === MotivationState.lookForFood) {
+            this.lookForFood()
+        } else if (this.state.motivationState === MotivationState.pickingUpFood) {
+            this.pickingUpFood()
+        } else if (this.state.motivationState === MotivationState.deliverFood) {
+            this.deliverFood()
         }
 
-        this.common()
+        if (this.state.motivationState !== MotivationState.pickingUpFood)
+            this.common()
     }
 }

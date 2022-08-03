@@ -27,11 +27,13 @@ function GameCanvas(): JSX.Element {
     while (cnt >= globals.simStepMs) {
       cnt -= globals.simStepMs;
       globals.gameTimeMs += globals.simStepMs;
+      globals.updateCounter++
 
       game.tickGame();
     }
 
     collision.homeMarkers.updateDebug();
+    collision.foodMarkers.updateDebug();
   }
 
   return (

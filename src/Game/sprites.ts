@@ -5,6 +5,7 @@ class sprites {
     static white_2x2: PIXI.Sprite
     static antDefault: PIXI.Sprite
     static level1Background: PIXI.Sprite
+    static homeIcon: PIXI.Sprite
 }
 
 export default sprites
