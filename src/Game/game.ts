@@ -31,7 +31,7 @@ class game {
     static ants: Ant[] = []
 
     static antBuyPrice(count: number): number {
-        return 0;
+        return count;
     }
 
     static stop() {
@@ -43,7 +43,8 @@ class game {
     
     static addMoney(amount: number) {
         this.money += amount
-        this.moneyLabel.textContent = `$${this.money}, ${-1} ants`
+        const txt: string = this.ants.length === 1 ? 'ant' : 'ants'
+        this.moneyLabel.textContent = `You have $${this.money} and ${this.ants.length} ${txt}`
     }
 
     private static saveKey: string = 'antsim-pwe-savegame-01'
@@ -75,6 +76,7 @@ class game {
 
     public static resetGame() {
         localStorage.removeItem(game.saveKey)
+        window.location.href = window.location.href
     }
 
     public static loadGame() {
@@ -98,7 +100,6 @@ class game {
         console.log('Starting game...')
     
         this.moneyLabel = document.getElementById('moneyLabel') as HTMLLabelElement
-        this.addMoney(0)
         
         const gameCanvas = document.getElementById('gameCanvas') as HTMLCanvasElement
         if (!gameCanvas)
@@ -114,6 +115,7 @@ class game {
         this.level.loadLevel()
 
         this.loadGame();
+        this.addMoney(0)
 
         this.app.ticker.add(tick)
     }
