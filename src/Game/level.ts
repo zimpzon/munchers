@@ -83,8 +83,8 @@ export class level {
         game.app.stage.addChild(collision.homeMarkers.sprite);
 
         level.home1 = createHome(580, 210, 30)
-        level.food1 = createFood(1050, 780, 30, 500)
-        level.food2 = createFood(380, 400, 30, 200)
+        level.food1 = createFood(1050, 780, 30, 100)
+        level.food2 = createFood(380, 400, 30, 100)
         level.food3 = createFood(410, 260, 30, 50)
         level.food4 = createFood(580, 110, 30, 10)
         level.food5 = createFood(1010, 547, 20, 1000)

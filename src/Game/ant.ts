@@ -4,6 +4,7 @@ import collision from './collision';
 import game from './game';
 import globals from './globals';
 import level from './level';
+import { distanceSqr } from './util'
 import markers, { sampleResult } from './markers';
 import sprites from './sprites';
 
@@ -44,6 +45,9 @@ export class Ant {
     prevIdxFoodSet: number = -1
     autonomousEnd: number = -1
     latestMarkersSample: sampleResult = new sampleResult()
+    nextStuckCheckMs: number = 0
+    stuckCheckX: number = -9999
+    stuckCheckY: number = -9999
 
     // Globals initialized in top of update()
     isOnHome: boolean = false
@@ -109,20 +113,10 @@ export class Ant {
             this.state.foodScent = game.gameState.foodScentMax
             this.state.motivationState = MotivationState.pickingUpFood
             this.state.pickUpFoodStartMs = globals.gameTimeMs
+            food.claim()
             const vec = new Vector(this.state.dirX *= Math.random() * 0.8 - 1, this.state.dirY *= Math.random() * 0.8 - 1)
             vec.normalise()
             this.SetDir(vec)
-            return
-        }
-    }
-
-    private pickingUpFood() {
-        if (globals.gameTimeMs > this.state.pickUpFoodStartMs + game.gameState.pickupFoodMs) {
-            const food = level.isOnFood(this.state.posX, this.state.posY)
-            if (food === null) {
-                this.state.motivationState = MotivationState.lookForFood
-                return
-            }
 
             this.prevIdxFoodSet = collision.foodMarkers.set(
                 this.state.posX,
@@ -130,10 +124,17 @@ export class Ant {
                 this.state.foodScent,
                 this.prevIdxFoodSet)
 
+                return
+        }
+    }
+
+    private pickingUpFood() {
+        if (globals.gameTimeMs > this.state.pickUpFoodStartMs + game.gameState.pickupFoodMs) {
             this.state.motivationState = MotivationState.deliverFood
             this.scanFwd.width = this.sugarSize
             this.scanFwd.height = this.sugarSize
-            food.claim()
+            this.stuckCheckX = -9999
+            this.stuckCheckY = -9999
         }
     }
 
@@ -154,6 +155,7 @@ export class Ant {
             vec.normalise()
             this.SetDir(vec)
             game.addMoney(1)
+
             return
         }
 
@@ -182,31 +184,43 @@ export class Ant {
     }
 
     private explore(modulus: number) {
+        if (Math.abs(this.turnAngle) > 0) {
+            this.turnAngle *= 0.99
+        }
+
         const rndSwitch = Math.random() / modulus < 0.1
         if (rndSwitch) {
+            const turn = Math.random() * 4 + 1
             const rnd = Math.random()
             if (rnd < this.prefLeft)
-                this.turnAngle = 3
+                this.turnAngle = turn
             else if (rnd > 1 - this.prefRight)
-                this.turnAngle = -3
+                this.turnAngle = -turn
             else
                 this.turnAngle = 0
         }
     }
 
     private common() {
-        // if (this.state.motivationState === MotivationState.deliverFood || this.state.motivationState === MotivationState.lookForFood) {
-        //     if (Math.random() < 0.001) // 33 checks per second
-        //         this.autonomousEnd = globals.gameTimeMs + 1000
-        // }
+        if (this.state.motivationState === MotivationState.deliverFood || this.state.motivationState === MotivationState.lookForFood) {
+            if (globals.gameTimeMs > this.nextStuckCheckMs) {
+                this.nextStuckCheckMs = globals.gameTimeMs + 800 + Math.random() * 200.0
+                const dist = distanceSqr(this.state.posX, this.state.posY, this.stuckCheckX, this.stuckCheckY)
+                if (dist  < 20 * 20 ) {
+                    this.autonomousEnd = globals.gameTimeMs + 50
+                }
+                this.stuckCheckX = this.state.posX
+                this.stuckCheckY = this.state.posY
+            }
+        }
 
         const vec = this.getDirVec()
         vec.rotate(PIXI.DEG_TO_RAD * this.turnAngle * globals.simStep * this.individualSpeed)
         this.SetDir(vec)
         this.container.rotation = Math.atan2(this.state.dirY, this.state.dirX)
 
-        this.state.homeScent = Math.max(0, this.state.homeScent - globals.simStepMs / 2)
-        this.state.foodScent = Math.max(0, this.state.foodScent - globals.simStepMs / 2)
+        this.state.homeScent = Math.max(0, this.state.homeScent - globals.simStepMs)
+        this.state.foodScent = Math.max(0, this.state.foodScent - globals.simStepMs)
 
         const fwd = this.container.toGlobal(this.pointFwd)
 

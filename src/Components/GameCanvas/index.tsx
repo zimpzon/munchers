@@ -21,7 +21,7 @@ function GameCanvas(): JSX.Element {
     let d = prev === 0 ? 1 : now - prev;
     d = Math.min(d, 50);
     prev = now;
-    if (globals.turbo) d *= 8;
+    if (globals.turbo) d *= 4;
 
     cnt += d;
     while (cnt >= globals.simStepMs) {
