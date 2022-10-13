@@ -82,8 +82,8 @@ class markers {
     }
 
     private calcIdx(worldX: number, worldY: number): number {
-        const x = Math.round(worldX * this.scaleWorldToX)
-        const y = Math.round(worldY * this.scaleWorldToY)
+        const x = Math.round(worldX * this.scaleWorldToX + 0.15)
+        const y = Math.round(worldY * this.scaleWorldToY + 0.15)
         return y * this.w + x
     }
 
@@ -96,6 +96,7 @@ class markers {
         const idx = this.calcIdx(worldX, worldY)
         let bestScent: number = -1
         let idxPrev: number = -1
+        let idxBest = -1
         const d = 2
         for (let y = -d; y <= d; ++y) {
             for (let x = -d; x <= d; ++x) {
@@ -104,6 +105,7 @@ class markers {
                 if (this.timestamps[subIdx] > globals.gameTimeMs && this.scent[subIdx] > bestScent) {
                     bestScent = this.scent[subIdx]
                     idxPrev = this.prevIdx[subIdx]
+                    idxBest = subIdx
                     result.success = true
                 }
             }
@@ -115,12 +117,15 @@ class markers {
         if (result.success) {
             const x = idxPrev % this.w
             const y = (idxPrev - x) / this.w
-            result.targetX = x * this.scaleXToWorld
-            result.targetY = y * this.scaleYToWorld
+            result.targetX = (x + 0.15) * this.scaleXToWorld
+            result.targetY = (y + 0.15) * this.scaleYToWorld
         }
     }
 
     public set(worldX: number, worldY: number, scentValue: number, idxPrev: number): number {
+        if (scentValue === 0)
+            scentValue = Math.random() * 1000
+
         const idx = this.calcIdx(worldX, worldY)
         if (scentValue > this.scent[idx] || globals.gameTimeMs > this.timestamps[idx]) {
             this.timestamps[idx] = globals.gameTimeMs + this.decayMs

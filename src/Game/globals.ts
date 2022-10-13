@@ -6,7 +6,7 @@ class globals {
   static markersW: number = 800;
   static markersH: number = 600;
   static homeDecayTime: number = 60000;
-  static foodDecayTime: number = 60000;
+  static foodDecayTime: number = 30000;
   static homeMarkerModulus: number = 1;
   static foodMarkerModulus: number = 1;
   static homeScanModulus: number = 3;

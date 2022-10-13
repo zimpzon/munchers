@@ -11,6 +11,9 @@ export class level {
     static home1: Home
     static food1: Food
     static food2: Food
+    static food3: Food
+    static food4: Food
+    static food5: Food
 
     backgroundSprite: PIXI.Sprite | undefined
     foodCircleSprite: PIXI.Sprite | undefined
@@ -19,7 +22,7 @@ export class level {
     static foods: Food[] = []
 
     public static getAntDefaultPos() {
-        return new Vector(580, 120)
+        return new Vector(this.home1.x, this.home1.y)
     }
 
     public static loadCollisionMap(levelData: { pixels: Uint8Array; w: number; h: number }) {
@@ -79,11 +82,14 @@ export class level {
         game.app.stage.addChild(collision.foodMarkers.sprite);
         game.app.stage.addChild(collision.homeMarkers.sprite);
 
-        level.home1 = createHome(580, 120, 30)
-        level.food1 = createFood(670, 740, 30, 1000)
-        level.food2 = createFood(380, 400, 30, 1000)
+        level.home1 = createHome(580, 210, 30)
+        level.food1 = createFood(1050, 780, 30, 100)
+        level.food2 = createFood(380, 400, 30, 100)
+        level.food3 = createFood(410, 260, 30, 50)
+        level.food4 = createFood(580, 110, 30, 10)
+        level.food5 = createFood(1010, 547, 20, 1000)
         level.homes = [level.home1]
-        level.foods = [level.food1, level.food2]
+        level.foods = [level.food1, level.food2, level.food3, level.food4, level.food5]
     }
 }
 

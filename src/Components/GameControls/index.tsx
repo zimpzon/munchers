@@ -6,40 +6,36 @@ import globals from '../../Game/globals';
 function ControlsTop(): JSX.Element {
   const [turbo, setTurbo] = useState(false);
 
-  const onBuy = (amount: number, cheat: boolean = false) => {
-    if (amount > game.money && !cheat) return;
+  const onBuy = (amount: number, price: number) => {
+    if (price > game.money) return;
 
-    for (let i = 0; i < amount; ++i) game.addAnt();
+    for (let i = 0; i < amount; ++i)
+      game.addAnt();
 
-    if (!cheat) game.addMoney(-amount);
-  };
+    game.addMoney(-price);
+  }
 
   const handleTurboChange = () => {
     globals.turbo = !turbo;
     setTurbo(!turbo);
-  };
+  }
 
   return (
     <>
-      <label id='moneyLabel'>$-, ants: {game.ants.length}</label>
-      <div>
-        <label>Scent trails</label>
-        <Button>+1 second</Button>
-      </div>
-      <div>
-        <label>Trails leading to food home</label>
-        <Button>+1 second</Button>
+    <div>
+      <label className='font-weight-bold' id='moneyLabel'>$-, ants: {game.ants.length}</label>
       </div>
       <Button onClick={() => game.saveGame()}>Save game</Button>
-      <Button onClick={() => game.resetGame()}>Reset game</Button>
-      <Button onClick={() => game.expandMap()}>Expand map</Button>
-      <Button onClick={() => onBuy(1, true)}>Buy 1 (${game.antBuyPrice(1)})</Button>
-      <Button onClick={() => onBuy(10, true)}>Buy 10 (${game.antBuyPrice(10)})</Button>
-      <Button onClick={() => onBuy(100, true)}>Buy 100 (cheat)</Button>
+      <Button onClick={() => onBuy(1, 1)}>Buy 1 ($1)</Button>
+      <Button onClick={() => onBuy(10, 9)}>Buy 10 ($9)</Button>
+      <Button onClick={() => onBuy(100, 80)}>Buy 100 ($80)</Button>
       <label>
         <input type='checkbox' checked={turbo} onChange={handleTurboChange} />
         Turbo
       </label>
+      <div>
+      <Button onClick={() => game.resetGame()}>Restart game, all progress will be lost (!)</Button>
+      </div>
     </>
   );
 }
