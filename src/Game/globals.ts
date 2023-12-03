@@ -1,4 +1,4 @@
-import { Grid } from "./grid";
+import { Grid } from './grid';
 
 class globals {
   static sceneW: number = 1200;
@@ -13,7 +13,14 @@ class globals {
   static simFps: number = 1000 / this.simStepMs;
   static simStep: number = 1 / this.simFps;
   static turbo: boolean = false;
-  static grid: Grid = new Grid(globals.collW, globals.collH, 40);
+  static grid: Grid = new Grid(globals.sceneW, globals.sceneH, 40);
+  static killerChance: number = 0.2;
+  static killerStarveTime: number = 100;
+  static antSpawnCounter: number = 50;
+  static queenSpawnCounter: number = 100;
+  static antDistTest: number = 20;
+  static killerDistTest: number = 10;
+  static killerCloneChance: number = 0.25;
 }
 
 export default globals;

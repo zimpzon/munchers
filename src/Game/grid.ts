@@ -1,5 +1,5 @@
-import { Ant } from "./ant";
-import { distanceSqr } from "./util";
+import { Ant } from './ant';
+import { distanceSqr } from './util';
 
 export class Grid {
   cellSize: number;
@@ -49,7 +49,7 @@ export class Grid {
     return [];
   }
 
-  getNearbyAnts(ant: Ant): Ant[] {
+  getNearbyAnts(ant: Ant, dist: number): Ant[] {
     const nearbyAnts: Ant[] = [];
 
     const x = Math.floor(ant.state.posX / this.cellSize);
@@ -67,15 +67,19 @@ export class Grid {
           neighborY < this.gridHeight
         ) {
           const others = this.grid[neighborX][neighborY];
-          for(let i = 0; i < others.length; ++i)
-          {
-            const other = others[i]
-            if (other.idx == ant.idx) continue;
+          for (const element of others) {
+            const other = element;
+            if (other.idx === ant.idx) continue;
             if (other.isDead) continue;
+            if (other.isQueen) continue;
 
-            const d = distanceSqr(ant.state.posX, ant.state.posY, other.state.posX, other.state.posY)
-            const minD = 25
-            if (d > minD * minD) continue;
+            const d = distanceSqr(
+              ant.state.posX,
+              ant.state.posY,
+              other.state.posX,
+              other.state.posY
+            );
+            if (d > dist * dist) continue;
 
             nearbyAnts.push(other);
           }
