@@ -3,32 +3,23 @@ import { Ant, IAntState, MotivationState } from './ant';
 import globals from './globals';
 import { level } from './level';
 import { RandomUnitVector } from './math';
+import { Vector } from 'vector2d';
 
 interface IGameState {
     phaseIdx: number,
     antStates: IAntState[],
     money: number,
-    homeScentMax: number
-    foodScentMax: number
-    pickupFoodMs: number
 }
 
-class GameState implements IGameState {
-    phaseIdx: number = 0
-    antStates: IAntState[] = []
-    money: number = 1
-    homeScentMax: number = globals.homeDecayTime
-    foodScentMax: number = globals.foodDecayTime
-    pickupFoodMs: number = 2000
-}
+type NUllableAnt = Ant | undefined;
 
 class game {
-    static app: PIXI.Application
+    public static app: PIXI.Application
     static gameState: IGameState
     static level: level
     static moneyLabel: HTMLLabelElement
     static money: number = 0
-    static ants: Ant[] = []
+    static ants: Array<NUllableAnt> = new Array(50000);
 
     static antBuyPrice(count: number): number {
         return count;
@@ -43,56 +34,18 @@ class game {
     
     static addMoney(amount: number) {
         this.money += amount
-        const txt: string = this.ants.length === 1 ? 'ant' : 'ants'
-        this.moneyLabel.textContent = `You have $${this.money} and ${this.ants.length} ${txt}`
     }
 
-    private static saveKey: string = 'antsim-pwe-savegame-01'
-
-    public static saveGame() {
-        this.gameState.antStates = this.ants.map(a => a.state)
-        const json: string = JSON.stringify(this.gameState)
-        localStorage.setItem(game.saveKey, json)
-    }
-
-    private static newAntState() : IAntState {
+    private static newAntState(startPos: Vector) : IAntState {
         const dir = RandomUnitVector()
-        const pos = level.getAntDefaultPos()
+        const pos = startPos
         return {
             dirX: dir.x,
             dirY: dir.y,
-            foodScent: 0,
-            homeScent: 0,
-            motivationState: MotivationState.lookForFood,
+            motivationState: MotivationState.Wander,
             posX: pos.x,
             posY: pos.y,
-            pickUpFoodStartMs: 0,
-        }
-    }
-
-    public static expandMap() {
-
-    }
-
-    public static resetGame() {
-        localStorage.removeItem(game.saveKey)
-        window.location.href = window.location.href
-    }
-
-    public static loadGame() {
-        const json = localStorage.getItem(game.saveKey)
-        if (json == null) {
-            const firstAnt: IAntState = this.newAntState()
-            this.gameState = new GameState()
-            this.gameState.antStates.push(firstAnt)
-        }
-        else {
-            this.gameState = JSON.parse(json)
-        }
-        
-        for (let i = 0; i < this.gameState.antStates.length; ++i) {
-            const ant = new Ant(this.gameState.antStates[i]);
-            this.ants.push(ant);
+            killOtherStartMs: 0,
         }
     }
 
@@ -114,22 +67,74 @@ class game {
         this.level = new level()
         this.level.loadLevel()
 
-        this.loadGame();
+        this.addAnt(level.getAntDefaultPos());
         this.addMoney(0)
 
         this.app.ticker.add(tick)
     }
 
     static tickGame() {
+        globals.grid.clearGrid();
+
         for (let ant of this.ants) {
-            ant.update()
+            if (!ant) continue;
+
+            globals.grid.addToGrid(ant);
+        }
+
+        for (let ant of this.ants) {
+            if (!ant) continue;
+
+            let near = globals.grid.getNearbyAnts(ant);
+            if (near.length > 2)
+            {
+                this.killAnt(ant);
+            }
+            else
+            {
+                ant.update()
+                const alone: boolean = near.length === 0
+                if (alone && ant.id === 0)
+                {
+                    ant.splitCounter++;
+                    if (ant.splitCounter > 50)
+                    {
+                        ant.splitCounter = 0;
+                        this.addAnt(new Vector(ant.container.position.x, ant.container.position.y))
+                    }
+                }
+            }
         }
     }
 
-    static addAnt() {
-        const antState: IAntState = this.newAntState()
+    static antCount: number = 0;
+
+    static updateText()
+    {
+        const txt: string = this.ants.length === 1 ? 'ant' : 'ants'
+        this.moneyLabel.textContent = `You have ${this.antCount} ${txt}`
+    }
+
+    static killAnt(ant: Ant) {
+        let lastAnt = this.ants[this.antCount - 1]!;
+        this.ants[ant.idx] = lastAnt;
+        this.ants[lastAnt.idx] = undefined;
+        lastAnt.idx = ant.idx;
+        ant.Kill()
+        this.antCount--;
+        this.updateText();
+    }
+
+    static addAnt(pos: Vector) {
+        if (this.antCount >= this.ants.length)
+            return;
+
+        const antState: IAntState = this.newAntState(pos)
         const ant = new Ant(antState);
-        this.ants.push(ant);
+        ant.idx = this.antCount;
+        this.ants[ant.idx] = ant;
+        this.antCount++
+        this.updateText();
     }
 }
 

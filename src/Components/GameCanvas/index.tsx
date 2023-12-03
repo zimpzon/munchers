@@ -31,9 +31,6 @@ function GameCanvas(): JSX.Element {
 
       game.tickGame();
     }
-
-    collision.homeMarkers.updateDebug();
-    collision.foodMarkers.updateDebug();
   }
 
   return (

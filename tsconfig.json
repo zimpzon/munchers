@@ -28,7 +28,7 @@
     "src/index.js",
     "src/**/*.ts",
     "src/**/*.tsx"
-  ],
+, "src/Game/grid.ts"  ],
   "exclude": [
     "**/node_modules",
     "node_modules",
