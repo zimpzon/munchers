@@ -11,6 +11,7 @@ interface IGameState {
   homeScentMax: number;
   foodScentMax: number;
   pickupFoodMs: number;
+  dropFoodMs: number;
 }
 
 class GameState implements IGameState {
@@ -20,6 +21,7 @@ class GameState implements IGameState {
   homeScentMax: number = globals.homeDecayTime;
   foodScentMax: number = globals.foodDecayTime;
   pickupFoodMs: number = 2000;
+  dropFoodMs: number = 1800;
 }
 
 class game {
@@ -69,6 +71,7 @@ class game {
       posX: pos.x,
       posY: pos.y,
       pickUpFoodStartMs: 0,
+      dropFoodStartMs: 0,
     };
   }
 

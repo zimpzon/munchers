@@ -5,12 +5,12 @@ class globals {
   static collH: number = 600;
   static markersW: number = 800;
   static markersH: number = 600;
-  static homeDecayTime: number = 60000;
+  static homeDecayTime: number = 40000;
   static foodDecayTime: number = 30000;
   static homeMarkerModulus: number = 1;
   static foodMarkerModulus: number = 1;
-  static homeScanModulus: number = 3;
-  static foodScanModulus: number = 10;
+  static homeScanModulus: number = 7;
+  static foodScanModulus: number = 4;
   static gameTimeMs: number = 0;
   static updateCounter: number = 0;
   static homeSize: number = 64;

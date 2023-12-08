@@ -5,6 +5,7 @@ import game from './game';
 import globals from './globals';
 import sprites from './sprites';
 import { distanceSqr } from './util';
+import { Ant } from './ant';
 
 export class level {
   static phase: Phase;
@@ -33,9 +34,7 @@ export class level {
       let g = levelData.pixels[idx + 1];
       let b = levelData.pixels[idx + 2];
       let a = levelData.pixels[idx + 3];
-      if (g === 255) {
-        a = 0;
-      } else if (b === 255) {
+      if (g === 255 || b === 255) {
         a = 0;
       }
       map[idx / 4] = a;
@@ -44,8 +43,8 @@ export class level {
   }
 
   public static isOnHome(x: number, y: number): boolean {
-    for (let i = 0; i < level.homes.length; ++i) {
-      const home = level.homes[i];
+    for (const element of level.homes) {
+      const home = element;
       if (
         x < home.x - home.radius ||
         x > home.x + home.radius ||
@@ -59,20 +58,39 @@ export class level {
     return false;
   }
 
-  public static isOnFood(x: number, y: number): Food | null {
-    for (let i = 0; i < level.foods.length; ++i) {
-      const food = level.foods[i];
+  public static isOnFood(ant: Ant, x: number, y: number): Food | null {
+    for (const element of level.foods) {
+      const food = element;
       if (
         x < food.x - food.radius ||
         x > food.x + food.radius ||
         y < food.y - food.radius ||
         y > food.y + food.radius ||
         food.amount <= 0
-      )
+      ) {
         continue;
+      }
 
-      return distanceSqr(x, y, food.x, food.y) < food.radius * food.radius ? food : null;
+      const dx = x - food.x;
+      const dy = y - food.y;
+      const signX = Math.sign(dx);
+      const signY = Math.sign(dy);
+
+      const isAtFood = dx * dx + dy * dy <= food.radius * food.radius;
+      if (isAtFood) {
+        return food;
+      }
+
+      const isCloseToFood = dx * dx + dy * dy < food.originalRadius * food.originalRadius * 1.5;
+
+      if (isCloseToFood) {
+        console.log('isCloseToFood');
+        ant.autonomousEnd = globals.gameTimeMs + 100;
+        ant.SetDir(new Vector(-signX, -signY).normalize());
+        return null;
+      }
     }
+
     return null;
   }
 
@@ -128,6 +146,7 @@ function createFood(xPos: number, yPos: number, radius: number, amount: number):
     y: yPos,
     maxRadius: radius,
     radius: radius,
+    originalRadius: radius,
     maxAmount: amount,
     amount: amount,
     sprite: new PIXI.Sprite(sprites.whiteCircle.texture),
@@ -176,6 +195,7 @@ interface Food {
   x: number;
   y: number;
   maxRadius: number;
+  originalRadius: number;
   radius: number;
   maxAmount: number;
   amount: number;
