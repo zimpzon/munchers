@@ -14,13 +14,13 @@ class globals {
   static simStep: number = 1 / this.simFps;
   static turbo: boolean = false;
   static grid: Grid = new Grid(globals.sceneW, globals.sceneH, 40);
-  static killerChance: number = 0.2;
-  static killerStarveTime: number = 100;
-  static antSpawnCounter: number = 50;
-  static queenSpawnCounter: number = 100;
-  static antDistTest: number = 20;
-  static killerDistTest: number = 10;
-  static killerCloneChance: number = 0.25;
+  static killerChance: number = 0.1;
+  static killerStarveTime: number = 50;
+  static antSpawnCounter: number = 30;
+  static queenSpawnCounter: number = 200;
+  static antDistTest: number = 10;
+  static killerDistTest: number = 5;
+  static killerCloneChance: number = 1.0;
 }
 
 export default globals;

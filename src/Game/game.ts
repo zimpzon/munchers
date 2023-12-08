@@ -94,7 +94,7 @@ class game {
       );
       const alone: boolean = near.length === 0;
       ant.setAlone(alone);
-      if (alone) {
+      if (alone || ant.isQueen) {
         ant.splitCounter++;
         if (!ant.isKiller && ant.splitCounter > ant.splitCounterMax) {
           // SPAWN NEW ANT
@@ -104,8 +104,6 @@ class game {
           );
 
           if (ant.isQueen && Math.random() < globals.killerChance) {
-            console.log('New killer ant!');
-
             newAnt?.setKiller();
           }
         }
@@ -120,7 +118,7 @@ class game {
   static antCount: number = 0;
 
   static updateText() {
-    const txt: string = this.ants.length === 1 ? 'ant' : 'ants';
+    const txt: string = this.antCount === 1 ? 'ant' : 'ants';
     this.moneyLabel.textContent = `You have ${this.antCount} ${txt}`;
   }
 

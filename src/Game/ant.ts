@@ -58,7 +58,7 @@ export class Ant {
 
     const ant = new PIXI.Sprite(sprites.antDefault.texture);
     this.mySprite = ant;
-    ant.tint = this.isQueen ? 0x1010ff : 0x000000;
+    ant.tint = this.isQueen ? 0xffff00 : 0x000000;
     ant.width = this.isQueen ? 15 : 10;
     ant.height = this.isQueen ? 15 : 10;
     ant.anchor.set(0.5, 0.5);

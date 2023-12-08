@@ -21,13 +21,14 @@ function GameCanvas(): JSX.Element {
     let d = prev === 0 ? 1 : now - prev;
     d = Math.min(d, 50);
     prev = now;
-    if (globals.turbo) d *= 4;
+    d *= 2;
+    if (globals.turbo) d *= 2;
 
     cnt += d;
     while (cnt >= globals.simStepMs) {
       cnt -= globals.simStepMs;
       globals.gameTimeMs += globals.simStepMs;
-      globals.updateCounter++
+      globals.updateCounter++;
 
       game.tickGame();
     }
