@@ -19,15 +19,15 @@ function GameCanvas(): JSX.Element {
   function tick() {
     const now = Date.now();
     let d = prev === 0 ? 1 : now - prev;
-    d = Math.min(d, 50);
+    d = Math.min(d, 50) * 2;
     prev = now;
-    if (globals.turbo) d *= 4;
+    if (globals.turbo) d *= 2;
 
     cnt += d;
     while (cnt >= globals.simStepMs) {
       cnt -= globals.simStepMs;
       globals.gameTimeMs += globals.simStepMs;
-      globals.updateCounter++
+      globals.updateCounter++;
 
       game.tickGame();
     }
@@ -36,11 +36,7 @@ function GameCanvas(): JSX.Element {
     collision.foodMarkers.updateDebug();
   }
 
-  return (
-    <>
-      <div id='gameCanvas' style={{ width: '80%', aspectRatio: '1/1' }} />
-    </>
-  );
+  return <div id='gameCanvas' style={{ width: '100%' }} />;
 }
 
 export default GameCanvas;

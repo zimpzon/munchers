@@ -12,17 +12,17 @@ function GameLoader(props: any): JSX.Element {
 
     const loader = new PIXI.Loader();
     loader.add('antDefault', 'gfx/ant.png');
-    loader.add('level1Background', 'gfx/level1_phase1.png');
+    loader.add('level1Background', 'gfx/level2.png');
+    // loader.add('level1Background', 'gfx/level1_phase1.png');
     loader.add('white_2x2', 'gfx/white_2x2.png');
     loader.add('whiteCircle', 'gfx/white_circle.png');
     loader.add('homeIcon', 'gfx/home.png');
 
     loader.load((_, resources: any) => {
+      const imgData1 = getImageData('gfx/level2.png');
+      collision.level_phase1 = level.loadCollisionMap(imgData1);
 
-      const imgData1 = getImageData('gfx/level1_phase1.png');
-      collision.level_phase1 = level.loadCollisionMap(imgData1)
-
-      sprites.whiteCircle = new PIXI.Sprite(resources.whiteCircle.texture)
+      sprites.whiteCircle = new PIXI.Sprite(resources.whiteCircle.texture);
       sprites.white_2x2 = new PIXI.Sprite(resources.white_2x2.texture);
 
       sprites.antDefault = new PIXI.Sprite(resources.antDefault.texture);
@@ -41,14 +41,14 @@ function GameLoader(props: any): JSX.Element {
   }, []);
 
   function getImageData(url: string): { pixels: Uint8Array; w: number; h: number } {
-    var img = new Image();
+    const img = new Image();
     img.src = url;
-    var canvas = document.createElement('canvas');
+    const canvas = document.createElement('canvas');
     canvas.width = img.width;
     canvas.height = img.height;
-    var context: any = canvas.getContext('2d');
+    const context: any = canvas.getContext('2d');
     context.drawImage(img, 0, 0);
-    var data = context.getImageData(0, 0, img.width, img.height).data;
+    const data = context.getImageData(0, 0, img.width, img.height).data;
     return { pixels: data, w: img.width, h: img.height };
   }
 
