@@ -59,9 +59,9 @@ class markers {
     this.uniforms = {
       gameTimeMs: 0,
       decayTimeMs: decayMs,
-      mulR: isHome ? 0.0 : 0.1,
-      mulG: isHome ? 0.1 : 0.05,
-      mulB: isHome ? 0.0 : 0.5,
+      mulR: isHome ? 0.1 : 0.3,
+      mulG: isHome ? 0.4 : 0.3,
+      mulB: isHome ? 0.0 : 1.0,
     };
 
     const shaderCode = document.getElementById('markerShader') as HTMLScriptElement;

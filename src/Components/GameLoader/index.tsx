@@ -16,7 +16,7 @@ function GameLoader(props: any): JSX.Element {
     // loader.add('level1Background', 'gfx/level1_phase1.png');
     loader.add('white_2x2', 'gfx/white_2x2.png');
     loader.add('whiteCircle', 'gfx/white_circle.png');
-    loader.add('homeIcon', 'gfx/home.png');
+    loader.add('homeIcon', 'gfx/tree.png');
 
     loader.load((_, resources: any) => {
       const imgData1 = getImageData('gfx/level1.png');
@@ -32,8 +32,8 @@ function GameLoader(props: any): JSX.Element {
       sprites.level1Background.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
 
       sprites.homeIcon = new PIXI.Sprite(resources.homeIcon.texture);
-      sprites.homeIcon.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
-
+      sprites.homeIcon.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
+      
       console.log('Loading complete.');
 
       setLoadingComplete(true);

@@ -6,15 +6,11 @@ import globals from './globals';
 import sprites from './sprites';
 import { distanceSqr } from './util';
 import { Ant } from './ant';
+import { log } from 'console';
 
 export class level {
   static phase: Phase;
   static home1: Home;
-  static food1: Food;
-  static food2: Food;
-  static food3: Food;
-  static food4: Food;
-  static food5: Food;
 
   backgroundSprite: PIXI.Sprite | undefined;
   foodCircleSprite: PIXI.Sprite | undefined;
@@ -84,7 +80,6 @@ export class level {
       const isCloseToFood = dx * dx + dy * dy < food.originalRadius * food.originalRadius * 1.5;
 
       if (isCloseToFood) {
-        console.log('isCloseToFood');
         ant.autonomousEnd = globals.gameTimeMs + 100;
         ant.SetDir(new Vector(-signX, -signY).normalize());
         return null;
@@ -105,16 +100,17 @@ export class level {
     game.app.stage.addChild(collision.homeMarkers.sprite);
 
     level.home1 = createHome(580, 210, 30);
-    level.food1 = createFood(1125, 820, 30, 50);
-    level.food2 = createFood(520, 420, 25, 50);
-    level.food2 = createFood(130, 320, 25, 50);
-    level.food2 = createFood(140, 805, 25, 50);
-    level.food3 = createFood(425, 260, 30, 10);
-    level.food4 = createFood(580, 110, 30, 10);
-    level.food5 = createFood(1070, 320, 20, 20);
-    level.food5 = createFood(1010, 547, 20, 5000);
     level.homes = [level.home1];
-    level.foods = [level.food1, level.food2, level.food3, level.food4, level.food5];
+
+    level.foods = []
+    level.foods.push(createFood(1125, 820, 30, 50));
+    level.foods.push(createFood(520, 420, 25, 50));
+    level.foods.push(createFood(130, 320, 25, 50));
+    level.foods.push(createFood(140, 805, 25, 50));
+    level.foods.push(createFood(425, 260, 30, 10));
+    level.foods.push(createFood(580, 110, 30, 10));
+    level.foods.push(createFood(1070, 320, 20, 20));
+    level.foods.push(createFood(1010, 547, 20, 5000));
   }
 }
 
@@ -132,12 +128,11 @@ function createHome(xPos: number, yPos: number, radius: number): Home {
   home.sprite.anchor.set(0.5, 0.5);
   home.sprite.x = xPos;
   home.sprite.y = yPos;
-  home.sprite.tint = 0xa0c0a0;
+  home.sprite.tint = 0xaaaaaa;
   const icon = new PIXI.Sprite(sprites.homeIcon.texture);
-  icon.width = 28;
-  icon.height = 28;
+  icon.width = 36;
+  icon.height = 36;
   icon.anchor.set(0.5, 0.5);
-  icon.tint = 0xa0e0a0;
   home.sprite.addChild(icon);
   game.app.stage.addChild(home.sprite);
   return home;
@@ -179,7 +174,7 @@ function createFood(xPos: number, yPos: number, radius: number, amount: number):
   food.sprite.height = radius * 2;
   food.sprite.x = xPos;
   food.sprite.y = yPos;
-  food.sprite.tint = 0xa01030;
+  food.sprite.tint = 0x9f1020;
   food.text.anchor.set(0.5, 0.5);
   food.sprite.addChild(food.text);
   food.text.text = (Math.round(food.amount * 100) / 100).toFixed(1);
