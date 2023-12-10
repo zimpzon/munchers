@@ -107,9 +107,9 @@ export class level {
     level.home1 = createHome(580, 210, 30);
     level.food1 = createFood(1125, 820, 30, 50);
     level.food2 = createFood(520, 420, 25, 50);
-    level.food2 = createFood(140, 320, 25, 50);
-    level.food2 = createFood(140, 820, 25, 50);
-    level.food3 = createFood(410, 260, 30, 10);
+    level.food2 = createFood(130, 320, 25, 50);
+    level.food2 = createFood(140, 805, 25, 50);
+    level.food3 = createFood(425, 260, 30, 10);
     level.food4 = createFood(580, 110, 30, 10);
     level.food5 = createFood(1070, 320, 20, 20);
     level.food5 = createFood(1010, 547, 20, 5000);
@@ -156,7 +156,7 @@ function createFood(xPos: number, yPos: number, radius: number, amount: number):
     text: new PIXI.Text(0, {
       fontFamily: 'Verdana',
       fontSize: 16,
-      fill: 0x101010,
+      fill: 0xffffff,
       align: 'center',
     }),
     claim: () => {
@@ -179,7 +179,7 @@ function createFood(xPos: number, yPos: number, radius: number, amount: number):
   food.sprite.height = radius * 2;
   food.sprite.x = xPos;
   food.sprite.y = yPos;
-  food.sprite.tint = 0xa0a0c0;
+  food.sprite.tint = 0xa01030;
   food.text.anchor.set(0.5, 0.5);
   food.sprite.addChild(food.text);
   food.text.text = (Math.round(food.amount * 100) / 100).toFixed(1);

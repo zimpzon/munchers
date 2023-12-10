@@ -29,7 +29,7 @@ function GameLoader(props: any): JSX.Element {
       sprites.antDefault.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
 
       sprites.level1Background = new PIXI.Sprite(resources.level1Background.texture);
-      sprites.level1Background.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
+      sprites.level1Background.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
 
       sprites.homeIcon = new PIXI.Sprite(resources.homeIcon.texture);
       sprites.homeIcon.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;

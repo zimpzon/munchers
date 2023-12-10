@@ -88,7 +88,7 @@ class game {
     const gameCanvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
     if (!gameCanvas) throw new Error('gameCanvas not found');
 
-    PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
+    PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.LINEAR;
     PIXI.settings.PREFER_ENV = PIXI.ENV.WEBGL2;
 
     this.app = new PIXI.Application({
