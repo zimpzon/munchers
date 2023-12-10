@@ -5,8 +5,8 @@ class globals {
   static collH: number = 600;
   static markersW: number = 800;
   static markersH: number = 600;
-  static homeDecayTime: number = 40000;
-  static foodDecayTime: number = 30000;
+  static homeDecayTime: number = 20000;
+  static foodDecayTime: number = 15000;
   static homeMarkerModulus: number = 1;
   static foodMarkerModulus: number = 1;
   static homeScanModulus: number = 7;
@@ -19,6 +19,7 @@ class globals {
   static simFps: number = 1000 / this.simStepMs;
   static simStep: number = 1 / this.simFps;
   static turbo: boolean = false;
+  static foodValue: number = 0.1;
 }
 
 export default globals;

@@ -170,7 +170,7 @@ export class Ant {
       const vec = new Vector(-1, -1);
       vec.normalise();
       this.SetDir(vec);
-      game.addMoney(0.2);
+      game.addMoney(globals.foodValue);
 
       return;
     }

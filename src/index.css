@@ -12,10 +12,41 @@ code {
     monospace;
 }
 
+.simulator {
+  margin-top: -15px;
+  margin-bottom: 15px;
+}
+
+.solitAnts {
+  padding: 5px;
+  margin: 4px;
+}
+
+.stats {
+  font-weight: 700;
+  padding: 5px;
+  margin: 4px;
+  margin-top: -5px;
+  margin-bottom: 0px;
+  color: red;
+}
+
 .buyButton {
   padding: 5px;
+  margin: 4px;
+  margin-top: -5px;
+  margin-bottom: -5px;
 }
 
 .buyButtonsSection {
   padding: 10px;
+}
+
+.hatImg {
+  position: absolute; /* Position the image absolutely inside the relative parent */
+  top: 0; /* Adjust these values as per your requirement */
+  left: 50%; /* Center the image horizontally */
+  width: 25px;
+  transform: translate(25%, 40%); /* Adjust the positioning precisely */
+  /* Other styling for your image */
 }

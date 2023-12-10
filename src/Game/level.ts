@@ -105,11 +105,14 @@ export class level {
     game.app.stage.addChild(collision.homeMarkers.sprite);
 
     level.home1 = createHome(580, 210, 30);
-    level.food1 = createFood(1050, 780, 35, 500);
-    level.food2 = createFood(380, 400, 35, 300);
-    level.food3 = createFood(410, 260, 35, 300);
-    level.food4 = createFood(580, 110, 35, 100);
-    level.food5 = createFood(1010, 547, 30, 50000);
+    level.food1 = createFood(1125, 820, 30, 50);
+    level.food2 = createFood(520, 420, 25, 50);
+    level.food2 = createFood(140, 320, 25, 50);
+    level.food2 = createFood(140, 820, 25, 50);
+    level.food3 = createFood(410, 260, 30, 10);
+    level.food4 = createFood(580, 110, 30, 10);
+    level.food5 = createFood(1070, 320, 20, 20);
+    level.food5 = createFood(1010, 547, 20, 5000);
     level.homes = [level.home1];
     level.foods = [level.food1, level.food2, level.food3, level.food4, level.food5];
   }
@@ -157,13 +160,13 @@ function createFood(xPos: number, yPos: number, radius: number, amount: number):
       align: 'center',
     }),
     claim: () => {
-      food.amount--;
+      food.amount -= globals.foodValue;
       if (food.amount <= 0) {
         food.sprite.visible = false;
         return;
       }
 
-      food.text.text = food.amount;
+      food.text.text = (Math.round(food.amount * 100) / 100).toFixed(1);
       const scale = (1 - (food.maxAmount - food.amount) / food.maxAmount) * 0.7 + 0.3;
       food.radius = food.maxRadius * scale;
       food.sprite.width = food.radius * 2 * scale;
@@ -179,7 +182,7 @@ function createFood(xPos: number, yPos: number, radius: number, amount: number):
   food.sprite.tint = 0xa0a0c0;
   food.text.anchor.set(0.5, 0.5);
   food.sprite.addChild(food.text);
-  food.text.text = food.amount;
+  food.text.text = (Math.round(food.amount * 100) / 100).toFixed(1);
   game.app.stage.addChild(food.sprite);
   return food;
 }

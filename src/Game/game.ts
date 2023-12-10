@@ -51,14 +51,6 @@ class game {
     )} and ${this.ants.length} ${txt}`;
   }
 
-  private static saveKey: string = 'antsim-pwe-savegame-01';
-
-  public static saveGame() {
-    this.gameState.antStates = this.ants.map((a) => a.state);
-    const json: string = JSON.stringify(this.gameState);
-    localStorage.setItem(game.saveKey, json);
-  }
-
   private static newAntState(): IAntState {
     const dir = RandomUnitVector();
     const pos = level.getAntDefaultPos();
@@ -78,19 +70,14 @@ class game {
   public static expandMap() {}
 
   public static resetGame() {
-    localStorage.removeItem(game.saveKey);
     window.location.href = window.location.href;
   }
 
   public static loadGame() {
-    const firstAnt: IAntState = this.newAntState();
     this.gameState = new GameState();
-    this.gameState.antStates.push(firstAnt);
-
-    for (const antState of this.gameState.antStates) {
-      const ant = new Ant(antState);
-      this.ants.push(ant);
-    }
+    this.addAnt();
+    this.addAnt();
+    this.addMoney(0);
   }
 
   static run(tick: () => void) {
@@ -105,7 +92,7 @@ class game {
     PIXI.settings.PREFER_ENV = PIXI.ENV.WEBGL2;
 
     this.app = new PIXI.Application({
-      backgroundColor: 0x606060,
+      backgroundColor: 0xc0a0a0,
       width: globals.sceneW,
       height: globals.sceneH,
     });
@@ -115,7 +102,6 @@ class game {
     this.level.loadLevel();
 
     this.loadGame();
-    this.addMoney(3);
 
     this.app.ticker.add(tick);
   }

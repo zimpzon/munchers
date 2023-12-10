@@ -1,9 +1,11 @@
-import './App.css'
-import GameControls from './Components/GameControls'
-import GameCanvas from './Components/GameCanvas'
-import Container from 'react-bootstrap/Container'
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
+import './App.css';
+import GameControls from './Components/GameControls';
+import GameCanvas from './Components/GameCanvas';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import { Button } from 'react-bootstrap';
+import game from './Game/game';
 
 function App() {
   return (
@@ -17,9 +19,13 @@ function App() {
             <GameCanvas />
           </Col>
         </Row>
+        <br></br>
+        <Button className='buyButton bg-success' onClick={() => game.resetGame()}>
+          Restart
+        </Button>
       </Container>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

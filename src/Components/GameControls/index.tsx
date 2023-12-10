@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button } from 'react-bootstrap';
 import game from '../../Game/game';
 import globals from '../../Game/globals';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function ControlsTop(): JSX.Element {
   const [turbo, setTurbo] = useState(false);
@@ -19,31 +20,42 @@ function ControlsTop(): JSX.Element {
     setTurbo(!turbo);
   };
 
+  const canBuy1 = true || game.money >= 1;
+  const canBuy10 = true || game.money >= 9;
+  const canBuy100 = true || game.money >= 80;
+
   return (
     <>
       <div>
-        <label className='font-weight-bold' id='moneyLabel'>
+        <h1 className='solitAnts' id=''>
+          SOLIT-<span className=''>A</span>-NTS
+        </h1>
+        <img className='hatImg' src='gfx/hat.png' />
+
+        <div className='simulator'>Christmas Shopping Simulator</div>
+        <label className='stats' id='moneyLabel'>
           $-, ants: {game.ants.length}
         </label>
       </div>
       <div className='buyButtonsSection'>
-        <Button className='buyButton' onClick={() => onBuy(1, 1)}>
+        <Button
+          className={'buyButton bg-success ' + (canBuy1 ? '' : 'bg-secondary')}
+          onClick={() => onBuy(1, 1)}>
           Buy 1 ($1)
         </Button>
-        <Button onClick={() => onBuy(10, 9)}>Buy 10 ($9)</Button>
-        <Button onClick={() => onBuy(100, 80)}>Buy 100 ($80)</Button>
+        <Button
+          className={'buyButton bg-success' + (canBuy10 ? '' : 'bg-secondary')}
+          onClick={() => onBuy(10, 9)}>
+          Buy 10 ($9)
+        </Button>
+        <Button
+          className={'buyButton bg-success' + (canBuy100 ? '' : 'bg-secondary')}
+          onClick={() => onBuy(100, 80)}>
+          Buy 100 ($80)
+        </Button>
       </div>
       <input type='checkbox' checked={turbo} onChange={handleTurboChange} />
-      <label>Turbo</label>
-      <div>
-        <label>Trails visibility</label>
-        <input type='range' />
-        <label>Home trail lifetime</label>
-        <input type='range' />
-        <label>Food trail lifetime</label>
-        <input type='range' />
-        <Button onClick={() => game.resetGame()}>Restart</Button>
-      </div>
+      <label onClick={handleTurboChange}> Turbo</label>
     </>
   );
 }
