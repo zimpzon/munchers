@@ -103,14 +103,14 @@ export class level {
     level.homes = [level.home1];
 
     level.foods = []
-    level.foods.push(createFood(1125, 820, 30, 50));
+    level.foods.push(createFood(1125, 820, 30, 200));
     level.foods.push(createFood(520, 420, 25, 50));
-    level.foods.push(createFood(130, 320, 25, 50));
-    level.foods.push(createFood(140, 805, 25, 50));
+    level.foods.push(createFood(130, 590, 25, 50));
+    level.foods.push(createFood(140, 805, 25, 100));
     level.foods.push(createFood(425, 260, 30, 10));
     level.foods.push(createFood(580, 110, 30, 10));
-    level.foods.push(createFood(1070, 320, 20, 20));
-    level.foods.push(createFood(1010, 547, 20, 5000));
+    level.foods.push(createFood(1070, 320, 25, 50));
+    level.foods.push(createFood(1010, 547, 20, 9999.9));
   }
 }
 
