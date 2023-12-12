@@ -6,6 +6,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { Button } from 'react-bootstrap';
 import game from './Game/game';
+import { Analytics } from '@vercel/analytics/react';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           Restart
         </Button>
       </Container>
+      <Analytics />
     </div>
   );
 }
