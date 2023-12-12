@@ -101,15 +101,55 @@ class game {
     this.level = new level();
     this.level.loadLevel();
 
+    const text = new PIXI.Text('HO HO HO', {
+      fontFamily: 'lucida console',
+      fontSize: 8,
+      fill: 0xffffff,
+      align: 'center'
+    });
+
+    text.x = this.app.screen.width / 2;
+    text.y = this.app.screen.height;
+    text.anchor.set(0.5);
+    level.hohoText = text;
+    level.hohoText.alpha = 0;
+    this.app.stage.addChild(text);
+
     this.loadGame();
 
     this.app.ticker.add(tick);
   }
 
+  static nextHoHo: number = 1000;
+  
   static tickGame() {
+    if (globals.gameTimeMs > this.nextHoHo) {
+      this.nextHoHo = globals.gameTimeMs + Math.random() * 2000 + 6000;
+      const hohoAntIdx: number = Math.floor(Math.random() * this.ants.length);
+
+      level.hohoText.y = this.ants[hohoAntIdx].state.posY;
+      level.hohoText.x = this.ants[hohoAntIdx].state.posX;
+      level.hohoText.alpha = 1;
+    }
+
     for (let ant of this.ants) {
       ant.update();
     }
+
+    level.hohoText.y -= 0.15;
+    level.hohoText.alpha = Math.max(0, level.hohoText.alpha - 0.01);
+
+    // level.
+    //     // Move the text up
+    //     text.y -= 2;
+
+    //     // Fade out the text as it moves up
+    //     text.alpha = Math.max(0, text.alpha - 0.01);
+    
+    //     // Remove the text if it's completely faded
+    //     if (text.alpha <= 0) {
+    //         app.stage.removeChild(text);
+    //     }
   }
 
   static addAnt() {
