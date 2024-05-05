@@ -7,6 +7,7 @@ import Col from 'react-bootstrap/Col';
 import { Button } from 'react-bootstrap';
 import game from './Game/game';
 import { Analytics } from '@vercel/analytics/react';
+import TextMultiline from './Components/GameControls/TextMultiline';
 
 function App() {
   return (
@@ -21,6 +22,10 @@ function App() {
           </Col>
         </Row>
         <br></br>
+        <Button className='buyButton bg-success' onClick={() => game.resetGame()}>
+          Apply level JSON
+        </Button>
+        <TextMultiline />
         <Button className='buyButton bg-success' onClick={() => game.resetGame()}>
           Restart
         </Button>

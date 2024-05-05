@@ -5,6 +5,7 @@ import globals from '../../Game/globals';
 
 function GameCanvas(): JSX.Element {
   useEffect(() => {
+    game.resetGame();
     game.run(tick);
 
     return () => {

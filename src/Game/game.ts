@@ -39,8 +39,10 @@ class game {
   static stop() {
     console.log('Stopping game...');
     const gameCanvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
-    gameCanvas.removeChild(this.app.view);
-    this.app.destroy();
+    if (this.app) {
+      gameCanvas.removeChild(this.app.view);
+      this.app.destroy();
+    }
   }
 
   static addMoney(amount: number) {
@@ -48,7 +50,6 @@ class game {
     this.money = Math.round(this.money * 100) / 100;
 
     const txt: string = this.ants.length === 1 ? 'ant' : 'ants';
-    console.log(this.money);
 
     this.moneyLabel.textContent = `You have $${this.money.toFixed(2)} and ${
       this.ants.length
@@ -74,17 +75,7 @@ class game {
   public static expandMap() {}
 
   public static resetGame() {
-    window.location.href = window.location.href;
-  }
-
-  public static loadGame() {
-    this.gameState = new GameState();
-    this.addAnt();
-    this.addAnt();
-    this.addMoney(0);
-  }
-
-  static run(tick: () => void) {
+    this.stop();
     console.log('Starting game...');
 
     this.moneyLabel = document.getElementById('moneyLabel') as HTMLLabelElement;
@@ -106,7 +97,17 @@ class game {
     this.level.loadLevel();
 
     this.loadGame();
+  }
 
+  public static loadGame() {
+    this.gameState = new GameState();
+    this.ants = [];
+    this.addAnt();
+    this.addAnt();
+    this.addMoney(0);
+  }
+
+  static run(tick: () => void) {
     this.app.ticker.add(tick);
   }
 
