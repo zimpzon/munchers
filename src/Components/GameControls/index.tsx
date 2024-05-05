@@ -28,11 +28,9 @@ function ControlsTop(): JSX.Element {
     <>
       <div>
         <h1 className='solitAnts' id=''>
-          SOLIT-<span className=''>A</span>-NTS
+          ...ANTS...
         </h1>
-        <img className='hatImg' src='gfx/hat.png' />
 
-        <div className='simulator'>Christmas Shopping Simulator</div>
         <label className='stats' id='moneyLabel'>
           $-, ants: {game.ants.length}
         </label>

@@ -45,10 +45,14 @@ class game {
 
   static addMoney(amount: number) {
     this.money += amount;
+    this.money = Math.round(this.money * 100) / 100;
+
     const txt: string = this.ants.length === 1 ? 'ant' : 'ants';
-    this.moneyLabel.textContent = `You have $${(Math.round(this.money * 100) / 100).toFixed(
-      2
-    )} and ${this.ants.length} ${txt}`;
+    console.log(this.money);
+
+    this.moneyLabel.textContent = `You have $${this.money.toFixed(2)} and ${
+      this.ants.length
+    } ${txt}`;
   }
 
   private static newAntState(): IAntState {
