@@ -87,7 +87,7 @@ class game {
     PIXI.settings.PREFER_ENV = PIXI.ENV.WEBGL2;
 
     this.app = new PIXI.Application({
-      backgroundColor: 0xb09090,
+      backgroundColor: 0xa09070,
       width: globals.sceneW,
       height: globals.sceneH,
     });

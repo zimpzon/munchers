@@ -204,7 +204,7 @@ export class Ant {
 
   private explore(modulus: number) {
     if (Math.abs(this.turnAngle) > 0) {
-      this.turnAngle *= 0.99;
+      this.turnAngle *= 0.9;
     }
 
     const rndSwitch = Math.random() / modulus < 0.1;
