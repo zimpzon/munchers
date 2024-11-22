@@ -8,7 +8,6 @@ import Col from 'react-bootstrap/Col';
 import { Button, Form } from 'react-bootstrap';
 import game from './Game/game';
 import { Analytics } from '@vercel/analytics/react';
-import TextMultiline from './Components/GameControls/TextMultiline';
 
 function App(): JSX.Element {
   const [levelJSON, setLevelJSON] = useState<string>('');

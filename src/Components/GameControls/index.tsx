@@ -6,6 +6,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 function ControlsTop(): JSX.Element {
   const [turbo, setTurbo] = useState(false);
+  const [showTrails, setShowTrails] = useState(true);
 
   const onBuy = (amount: number, price: number) => {
     if (price > game.money) return;
@@ -18,6 +19,11 @@ function ControlsTop(): JSX.Element {
   const handleTurboChange = () => {
     globals.turbo = !turbo;
     setTurbo(!turbo);
+  };
+
+  const handleShowTrailsChange = () => {
+    globals.showTrails = !showTrails;
+    setShowTrails(!showTrails);
   };
 
   const canBuy1 = true || game.money >= 1;
@@ -52,8 +58,16 @@ function ControlsTop(): JSX.Element {
           Buy 100 ($80)
         </Button>
       </div>
-      <input type='checkbox' checked={turbo} onChange={handleTurboChange} />
-      <label onClick={handleTurboChange}> Turbo</label>
+      <div style={{ display: 'inline-flex', gap: '20px', alignItems: 'center' }}>
+        <div style={{ display: 'inline-flex', gap: '5px', alignItems: 'center' }}>
+          <input type='checkbox' checked={turbo} onChange={handleTurboChange} />
+          <label onClick={handleTurboChange}>Turbo</label>
+        </div>
+        <div style={{ display: 'inline-flex', gap: '5px', alignItems: 'center' }}>
+          <input type='checkbox' checked={showTrails} onChange={handleShowTrailsChange} />
+          <label onClick={handleShowTrailsChange}>Trails</label>
+        </div>
+      </div>
     </>
   );
 }
