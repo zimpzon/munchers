@@ -29,7 +29,7 @@ class game {
   static gameState: IGameState;
   static level: level;
   static moneyLabel: HTMLLabelElement;
-  static money: number = 0;
+  static money: number = 1000; // 0;
   static ants: Ant[] = [];
 
   static antBuyPrice(count: number): number {
@@ -83,7 +83,7 @@ class game {
     const gameCanvas = document.getElementById('gameCanvas') as HTMLCanvasElement;
     if (!gameCanvas) throw new Error('gameCanvas not found');
 
-    PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.LINEAR;
+    PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
     PIXI.settings.PREFER_ENV = PIXI.ENV.WEBGL2;
 
     this.app = new PIXI.Application({

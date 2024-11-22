@@ -5,7 +5,6 @@ import GameCanvas from './Components/GameCanvas';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import { Button, Form } from 'react-bootstrap';
 import game from './Game/game';
 import { Analytics } from '@vercel/analytics/react';
 
@@ -32,38 +31,19 @@ function App(): JSX.Element {
 
   return (
     <div className='App'>
-      <Container>
+      <Container fluid>
         <Row>
-          <Col>
+          <Col xs={3}>
             <GameControls />
           </Col>
-          <Col>
+          <Col xs={8}>
             <GameCanvas />
           </Col>
         </Row>
-        <br />
-        <Form>
-          <Form.Group controlId='jsonTextArea'>
-            <Form.Label>Enter JSON:</Form.Label>
-            <Form.Control as='textarea' rows={5} value={levelJSON} onChange={handleJSONChange} />
-          </Form.Group>
-        </Form>
-        <Button className='buyButton bg-success' onClick={applyLevelJSON}>
-          Download level
-        </Button>
-        <Button className='buyButton bg-success' onClick={applyLevelJSON}>
-          Upload level
-        </Button>
-        <Button className='buyButton bg-success' onClick={applyLevelJSON}>
-          Apply level JSON
-        </Button>
-        <Button className='buyButton bg-success' onClick={restartGame}>
-          Restart
-        </Button>
       </Container>
       <Analytics />
     </div>
   );
-}
+  }
 
 export default App;

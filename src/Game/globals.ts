@@ -19,7 +19,7 @@ class globals {
   static simFps: number = 1000 / this.simStepMs;
   static simStep: number = 1 / this.simFps;
   static turbo: boolean = false;
-  static showTrails: boolean = false;
+  static showTrails: boolean = true;
   static foodValue: number = 0.1;
 }
 

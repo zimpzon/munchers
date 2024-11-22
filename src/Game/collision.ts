@@ -22,6 +22,19 @@ class collision {
   static level_phase3: Uint8Array;
   static level_phase4: Uint8Array;
 
+  static isCloseToWall(x: number, y: number): boolean {
+    const worldToCollScaleX = globals.collW / globals.sceneW;
+    const worldToCollScaleY = globals.collH / globals.sceneH;
+    const sampleX = Math.round(x * worldToCollScaleX);
+    const sampleY = Math.round(y * worldToCollScaleY);
+    const sum =
+      this.sampleLocalCoord(sampleX + 2, sampleY - 2) +
+      this.sampleLocalCoord(sampleX + 2, sampleY + 2) +
+      this.sampleLocalCoord(sampleX - 2, sampleY + 2) +
+      this.sampleLocalCoord(sampleX - 2, sampleY - 2);
+    return sum > 0;
+  }
+
   static sample(x: number, y: number): number {
     const worldToCollScaleX = globals.collW / globals.sceneW;
     const worldToCollScaleY = globals.collH / globals.sceneH;

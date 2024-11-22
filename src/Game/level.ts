@@ -6,7 +6,6 @@ import globals from './globals';
 import sprites from './sprites';
 import { distanceSqr } from './util';
 import { Ant } from './ant';
-import { log } from 'console';
 
 export class level {
   static phase: Phase;

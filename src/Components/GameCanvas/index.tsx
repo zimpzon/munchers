@@ -37,7 +37,7 @@ function GameCanvas(): JSX.Element {
     collision.foodMarkers.updateDebug();
   }
 
-  return <div id='gameCanvas' style={{ width: '100%' }} />;
+  return <div id='gameCanvas'/>;
 }
 
 export default GameCanvas;

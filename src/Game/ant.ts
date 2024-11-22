@@ -47,9 +47,6 @@ export class Ant {
   prevIdxFoodSet: number = -1;
   public autonomousEnd: number = -1;
   latestMarkersSample: sampleResult = new sampleResult();
-  nextStuckCheckMs: number = 0;
-  stuckCheckX: number = -9999;
-  stuckCheckY: number = -9999;
 
   // Globals initialized in top of update()
   isOnHome: boolean = false;
@@ -139,8 +136,6 @@ export class Ant {
       this.state.motivationState = MotivationState.deliverFood;
       this.scanFwd.width = this.sugarSize;
       this.scanFwd.height = this.sugarSize;
-      this.stuckCheckX = -9999;
-      this.stuckCheckY = -9999;
     }
   }
 
@@ -149,8 +144,6 @@ export class Ant {
       this.state.motivationState = MotivationState.lookForFood;
       this.scanFwd.width = 0;
       this.scanFwd.height = 0;
-      this.stuckCheckX = -9999;
-      this.stuckCheckY = -9999;
     }
   }
 
@@ -218,26 +211,6 @@ export class Ant {
   }
 
   private common() {
-    if (
-      this.state.motivationState === MotivationState.deliverFood ||
-      this.state.motivationState === MotivationState.lookForFood
-    ) {
-      if (globals.gameTimeMs > this.nextStuckCheckMs) {
-        this.nextStuckCheckMs = globals.gameTimeMs + 500 + Math.random() * 250.0;
-        const dist = distanceSqr(
-          this.state.posX,
-          this.state.posY,
-          this.stuckCheckX,
-          this.stuckCheckY
-        );
-        if (dist < 20 * 20) {
-          this.autonomousEnd = globals.gameTimeMs + 100;
-        }
-        this.stuckCheckX = this.state.posX;
-        this.stuckCheckY = this.state.posY;
-      }
-    }
-
     const vec = this.getDirVec();
     vec.rotate(PIXI.DEG_TO_RAD * this.turnAngle * globals.simStep * this.individualSpeed);
     this.SetDir(vec);
