@@ -10,16 +10,16 @@ function GameLoader(props: any): JSX.Element {
   useEffect(() => {
     console.log('Loading resources...');
 
+    const levelPath = 'gfx/level2.png';
     const loader = new PIXI.Loader();
     loader.add('antDefault', 'gfx/ant.png');
-    loader.add('level1Background', 'gfx/level1.png');
-    // loader.add('level1Background', 'gfx/level1_phase1.png');
+    loader.add('level1Background', levelPath);
     loader.add('white_2x2', 'gfx/white_2x2.png');
     loader.add('whiteCircle', 'gfx/white_circle.png');
     loader.add('homeIcon', 'gfx/home.png');
 
     loader.load((_, resources: any) => {
-      const imgData1 = getImageData('gfx/level1.png');
+      const imgData1 = getImageData(levelPath);
       collision.level_phase1 = level.loadCollisionMap(imgData1);
 
       sprites.whiteCircle = new PIXI.Sprite(resources.whiteCircle.texture);

@@ -23,17 +23,27 @@ export class level {
 
   public static loadCollisionMap(levelData: { pixels: Uint8Array; w: number; h: number }) {
     const total = levelData.w * levelData.h;
-
+    let min: number = 9999;
+    let max: number = -9999;
+    let sum = 0;
+    console.log("w: " + levelData.w);
+    console.log("h: " + levelData.h);
+    
     const map = new Uint8Array(total);
     for (let idx = 0; idx < total * 4; idx += 4) {
+      let r = levelData.pixels[idx + 0];
       let g = levelData.pixels[idx + 1];
       let b = levelData.pixels[idx + 2];
       let a = levelData.pixels[idx + 3];
-      if (g === 255 || b === 255) {
-        a = 0;
-      }
-      map[idx / 4] = a;
+      if (g < min) min = g;
+      if (g > max) max = g;
+         a = 0;
+      map[idx / 4] = g == 0 ? 0 : 255;
     }
+    console.log("min: " + min);
+    console.log("max: " + max);
+    console.log("avg: " + sum / total);
+    
     return map;
   }
 
@@ -102,14 +112,21 @@ export class level {
     level.homes = [level.home1];
 
     level.foods = []
-    level.foods.push(createFood(1125, 820, 30, 200));
-    level.foods.push(createFood(520, 420, 25, 50));
-    level.foods.push(createFood(130, 590, 25, 50));
-    level.foods.push(createFood(140, 805, 25, 100));
-    level.foods.push(createFood(425, 260, 30, 10));
-    level.foods.push(createFood(580, 110, 30, 10));
-    level.foods.push(createFood(1070, 320, 25, 50));
-    level.foods.push(createFood(1010, 547, 20, 9999.9));
+    for (let i: number = 50; i <= 1150; i += 100)
+    {
+      for (let j: number = 450; j <= 650; j += 100)
+        {
+          level.foods.push(createFood(i, j, 30, 25));
+        }
+    }
+    // level.foods.push(createFood(1125, 820, 30, 200));
+    // level.foods.push(createFood(520, 820, 25, 50));
+    // level.foods.push(createFood(130, 590, 25, 50));
+    // level.foods.push(createFood(140, 805, 25, 100));
+    // level.foods.push(createFood(425, 660, 30, 10));
+    // level.foods.push(createFood(580, 110, 30, 10));
+    // level.foods.push(createFood(1070, 720, 25, 50));
+    // level.foods.push(createFood(1010, 847, 20, 9999.9));
   }
 }
 

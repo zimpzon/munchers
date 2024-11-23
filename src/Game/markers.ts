@@ -88,7 +88,7 @@ class markers {
   }
 
   public updateDebug() {
-    this.uniforms.gameTimeMs = globals.showTrails ? globals.gameTimeMs : globals.gameTimeMs + 25000;
+    this.uniforms.gameTimeMs = globals.showTrails ? globals.gameTimeMs + 10000 : globals.gameTimeMs + 25000;
     this.tex.update();
   }
 
