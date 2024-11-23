@@ -4,7 +4,6 @@ import collision from './collision';
 import game from './game';
 import globals from './globals';
 import level from './level';
-import { distanceSqr } from './util';
 import markers, { sampleResult } from './markers';
 import sprites from './sprites';
 
@@ -127,6 +126,17 @@ export class Ant {
         this.prevIdxFoodSet
       );
 
+      for (let y: number = -2; y <= 3; ++y) {
+        for (let x: number = -2; x <= 3; ++x) {
+          collision.foodMarkers.set(
+            this.state.posX + x,
+            this.state.posY + y,
+            this.state.foodScent,
+            this.prevIdxFoodSet
+          );
+        }
+      }
+
       return;
     }
   }
@@ -144,6 +154,8 @@ export class Ant {
       this.state.motivationState = MotivationState.lookForFood;
       this.scanFwd.width = 0;
       this.scanFwd.height = 0;
+      this.state.dirX *= -1;
+      this.state.dirY *= -1;
     }
   }
 

@@ -12,6 +12,7 @@ export class level {
   static home1: Home;
 
   backgroundSprite: PIXI.Sprite | undefined;
+  foodLayerSprite: PIXI.Sprite | undefined;
   foodCircleSprite: PIXI.Sprite | undefined;
 
   static homes: Home[] = [];
@@ -26,9 +27,9 @@ export class level {
     let min: number = 9999;
     let max: number = -9999;
     let sum = 0;
-    console.log("w: " + levelData.w);
-    console.log("h: " + levelData.h);
-    
+    console.log('w: ' + levelData.w);
+    console.log('h: ' + levelData.h);
+
     const map = new Uint8Array(total);
     for (let idx = 0; idx < total * 4; idx += 4) {
       let r = levelData.pixels[idx + 0];
@@ -37,13 +38,13 @@ export class level {
       let a = levelData.pixels[idx + 3];
       if (g < min) min = g;
       if (g > max) max = g;
-         a = 0;
+      a = 0;
       map[idx / 4] = g == 0 ? 0 : 255;
     }
-    console.log("min: " + min);
-    console.log("max: " + max);
-    console.log("avg: " + sum / total);
-    
+    console.log('min: ' + min);
+    console.log('max: ' + max);
+    console.log('avg: ' + sum / total);
+
     return map;
   }
 
@@ -104,20 +105,24 @@ export class level {
     this.backgroundSprite = sprites.level1Background;
     this.backgroundSprite.width = globals.sceneW;
     this.backgroundSprite.height = globals.sceneH;
+
+    // this.foodLayerSprite = sprites.foodLayer;
+    // this.foodLayerSprite.width = globals.sceneW;
+    // this.foodLayerSprite.height = globals.sceneH;
+
     game.app.stage.addChild(this.backgroundSprite);
+    // game.app.stage.addChild(this.foodLayerSprite);
     game.app.stage.addChild(collision.foodMarkers.sprite);
     game.app.stage.addChild(collision.homeMarkers.sprite);
 
-    level.home1 = createHome(580, 210, 30);
+    level.home1 = createHome(580, 90, 30);
     level.homes = [level.home1];
 
-    level.foods = []
-    for (let i: number = 50; i <= 1150; i += 100)
-    {
-      for (let j: number = 450; j <= 650; j += 100)
-        {
-          level.foods.push(createFood(i, j, 30, 25));
-        }
+    level.foods = [];
+    for (let i: number = 50; i <= 1150; i += 100) {
+      for (let j: number = 650; j <= 850; j += 100) {
+        level.foods.push(createFood(i, j, 30, 25));
+      }
     }
     // level.foods.push(createFood(1125, 820, 30, 200));
     // level.foods.push(createFood(520, 820, 25, 50));

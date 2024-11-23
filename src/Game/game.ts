@@ -29,7 +29,7 @@ class game {
   static gameState: IGameState;
   static level: level;
   static moneyLabel: HTMLLabelElement;
-  static money: number = 1000; // 0;
+  static money: number = 0;
   static ants: Ant[] = [];
 
   static antBuyPrice(count: number): number {
@@ -102,8 +102,9 @@ class game {
   public static loadGame() {
     this.gameState = new GameState();
     this.ants = [];
-    this.addAnt();
-    this.addAnt();
+    for (let i: number = 0; i < 25; ++i) {
+      this.addAnt();
+    }
     this.addMoney(0);
   }
 

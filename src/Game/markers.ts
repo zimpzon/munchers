@@ -88,7 +88,9 @@ class markers {
   }
 
   public updateDebug() {
-    this.uniforms.gameTimeMs = globals.showTrails ? globals.gameTimeMs + 10000 : globals.gameTimeMs + 25000;
+    this.uniforms.gameTimeMs = globals.showTrails
+      ? globals.gameTimeMs + 10000
+      : globals.gameTimeMs + 25000;
     this.tex.update();
   }
 
@@ -111,6 +113,8 @@ class markers {
       }
     }
 
+    // We use idxPrev here, even if there is idxBest. For some reason idxBest works terribly.
+    // I don't remember writing this, so just ignore and leave it at idxPrev.
     if (idxPrev < 0) result.success = false;
 
     if (result.success) {
@@ -127,8 +131,7 @@ class markers {
     const idx = this.calcIdx(worldX, worldY);
     // do not set scent values next to a wall (attempt to get rid of stuck ants at corners)
 
-    if (collision.isCloseToWall(worldX, worldY))
-    {
+    if (collision.isCloseToWall(worldX, worldY)) {
       return 0;
     }
 

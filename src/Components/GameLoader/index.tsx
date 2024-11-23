@@ -11,9 +11,11 @@ function GameLoader(props: any): JSX.Element {
     console.log('Loading resources...');
 
     const levelPath = 'gfx/level2.png';
+    const foodLayerPath = 'gfx/food.png';
     const loader = new PIXI.Loader();
     loader.add('antDefault', 'gfx/ant.png');
     loader.add('level1Background', levelPath);
+    loader.add('foodLayer', foodLayerPath);
     loader.add('white_2x2', 'gfx/white_2x2.png');
     loader.add('whiteCircle', 'gfx/white_circle.png');
     loader.add('homeIcon', 'gfx/home.png');
@@ -30,6 +32,9 @@ function GameLoader(props: any): JSX.Element {
 
       sprites.level1Background = new PIXI.Sprite(resources.level1Background.texture);
       sprites.level1Background.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
+
+      sprites.foodLayer = new PIXI.Sprite(resources.foodLayer.texture);
+      sprites.foodLayer.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
 
       sprites.homeIcon = new PIXI.Sprite(resources.homeIcon.texture);
       sprites.homeIcon.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
