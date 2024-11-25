@@ -87,7 +87,7 @@ class game {
     PIXI.settings.PREFER_ENV = PIXI.ENV.WEBGL2;
 
     this.app = new PIXI.Application({
-      backgroundColor: 0xa09070,
+      backgroundColor: 0x5f7f4a,
       width: globals.sceneW,
       height: globals.sceneH,
     });
@@ -102,7 +102,7 @@ class game {
   public static loadGame() {
     this.gameState = new GameState();
     this.ants = [];
-    for (let i: number = 0; i < 25; ++i) {
+    for (let i: number = 0; i < 3; ++i) {
       this.addAnt();
     }
     this.addMoney(0);

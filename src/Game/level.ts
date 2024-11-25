@@ -38,13 +38,8 @@ export class level {
       let a = levelData.pixels[idx + 3];
       if (g < min) min = g;
       if (g > max) max = g;
-      a = 0;
-      map[idx / 4] = g == 0 ? 0 : 255;
+      map[idx / 4] = a > 32 ? 255 : 0;
     }
-    console.log('min: ' + min);
-    console.log('max: ' + max);
-    console.log('avg: ' + sum / total);
-
     return map;
   }
 
@@ -119,19 +114,18 @@ export class level {
     level.homes = [level.home1];
 
     level.foods = [];
-    for (let i: number = 50; i <= 1150; i += 100) {
-      for (let j: number = 650; j <= 850; j += 100) {
-        level.foods.push(createFood(i, j, 30, 25));
-      }
-    }
-    // level.foods.push(createFood(1125, 820, 30, 200));
-    // level.foods.push(createFood(520, 820, 25, 50));
-    // level.foods.push(createFood(130, 590, 25, 50));
-    // level.foods.push(createFood(140, 805, 25, 100));
-    // level.foods.push(createFood(425, 660, 30, 10));
-    // level.foods.push(createFood(580, 110, 30, 10));
-    // level.foods.push(createFood(1070, 720, 25, 50));
-    // level.foods.push(createFood(1010, 847, 20, 9999.9));
+    // startup
+    level.foods.push(createFood( 445, 145, 15,   5));
+    level.foods.push(createFood( 545, 245, 15,   5));
+    level.foods.push(createFood( 745, 125, 15,   5));
+
+    level.foods.push(createFood(  48,  48, 15,   5));
+    level.foods.push(createFood( 798, 230, 15,  10));
+    level.foods.push(createFood(1052, 170, 15,  10));
+    level.foods.push(createFood( 580, 445, 15,  10));
+    level.foods.push(createFood( 312, 503, 15,  30));
+    level.foods.push(createFood( 392, 763, 15,  50));
+    level.foods.push(createFood( 812, 763, 15, 100));
   }
 }
 
