@@ -36,6 +36,8 @@ class collision {
   }
 
   static sample(x: number, y: number): number {
+    // return this.isCloseToWall(x, y) ? 255 : 0;
+
     const worldToCollScaleX = globals.collW / globals.sceneW;
     const worldToCollScaleY = globals.collH / globals.sceneH;
     const sampleX = Math.round(x * worldToCollScaleX);

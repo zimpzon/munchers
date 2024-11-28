@@ -44,7 +44,6 @@ export class Ant {
   homeScanId: number;
   prevIdxHomeSet: number = -1;
   prevIdxFoodSet: number = -1;
-  public autonomousEnd: number = -1;
   latestMarkersSample: sampleResult = new sampleResult();
 
   // Globals initialized in top of update()
@@ -60,7 +59,7 @@ export class Ant {
     ant.tint = 0xffffff;
     ant.width = 10;
     ant.height = 10;
-    ant.anchor.set(0.5, 0.5);
+    ant.anchor.set(0.2, 0.5);
     this.container.addChild(ant);
 
     this.pointFwd.x = ant.width * 0.6;
@@ -70,7 +69,7 @@ export class Ant {
     dotFwd.height = state.motivationState === MotivationState.deliverFood ? this.sugarSize : 0;
     dotFwd.position = this.pointFwd;
     dotFwd.anchor.set(0.5, 0.5);
-    dotFwd.tint = 0x10edef;
+    dotFwd.tint = 0xf06d6f;
     this.scanFwd = dotFwd;
     this.container.addChild(this.scanFwd);
 
@@ -186,8 +185,6 @@ export class Ant {
   }
 
   private sample(markers: markers) {
-    if (globals.gameTimeMs < this.autonomousEnd) return;
-
     const fwd = this.container.toGlobal(this.scanFwd);
     markers.sample(fwd.x, fwd.y, this.latestMarkersSample);
     if (this.latestMarkersSample.success === true) {

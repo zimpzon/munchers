@@ -85,7 +85,6 @@ export class level {
       const isCloseToFood = dx * dx + dy * dy < food.originalRadius * food.originalRadius * 1.5;
 
       if (isCloseToFood) {
-        ant.autonomousEnd = globals.gameTimeMs + 100;
         ant.SetDir(new Vector(-signX, -signY).normalize());
         return null;
       }
@@ -110,22 +109,24 @@ export class level {
     game.app.stage.addChild(collision.foodMarkers.sprite);
     game.app.stage.addChild(collision.homeMarkers.sprite);
 
-    level.home1 = createHome(580, 90, 30);
+    level.home1 = createHome(100, 200, 30);
     level.homes = [level.home1];
 
     level.foods = [];
     // startup
-    level.foods.push(createFood( 445, 145, 15,   5));
-    level.foods.push(createFood( 545, 245, 15,   5));
-    level.foods.push(createFood( 745, 125, 15,   5));
-
-    level.foods.push(createFood(  48,  48, 15,   5));
-    level.foods.push(createFood( 798, 230, 15,  10));
-    level.foods.push(createFood(1052, 170, 15,  10));
-    level.foods.push(createFood( 580, 445, 15,  10));
-    level.foods.push(createFood( 312, 503, 15,  30));
-    level.foods.push(createFood( 392, 763, 15,  50));
-    level.foods.push(createFood( 812, 763, 15, 100));
+    level.foods.push(createFood(545, 195, 15, 5));
+    level.foods.push(createFood(120, 350, 15, 5));
+    level.foods.push(createFood(260, 185, 15, 5));
+    level.foods.push(createFood(480, 360, 15, 5));
+    level.foods.push(createFood(120, 530, 15, 5));
+    level.foods.push(createFood(300, 550, 15, 5));
+    level.foods.push(createFood(1040, 170, 15, 5));
+    level.foods.push(createFood(1000, 470, 15, 5));
+    level.foods.push(createFood(700, 460, 15, 5));
+    level.foods.push(createFood(840, 750, 15, 5));
+    level.foods.push(createFood(90, 730, 15, 5));
+    level.foods.push(createFood(470, 780, 15, 5));
+    level.foods.push(createFood(1150, 850, 15, 5));
   }
 }
 
