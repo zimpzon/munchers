@@ -6,13 +6,13 @@ import globals from './globals';
 import sprites from './sprites';
 import { distanceSqr } from './util';
 import { Ant } from './ant';
-import { log } from 'console';
 
 export class level {
   static phase: Phase;
   static home1: Home;
 
   backgroundSprite: PIXI.Sprite | undefined;
+  foodLayerSprite: PIXI.Sprite | undefined;
   foodCircleSprite: PIXI.Sprite | undefined;
 
   static hohoText: PIXI.Text;
@@ -26,16 +26,21 @@ export class level {
 
   public static loadCollisionMap(levelData: { pixels: Uint8Array; w: number; h: number }) {
     const total = levelData.w * levelData.h;
+    let min: number = 9999;
+    let max: number = -9999;
+    let sum = 0;
+    console.log('w: ' + levelData.w);
+    console.log('h: ' + levelData.h);
 
     const map = new Uint8Array(total);
     for (let idx = 0; idx < total * 4; idx += 4) {
+      let r = levelData.pixels[idx + 0];
       let g = levelData.pixels[idx + 1];
       let b = levelData.pixels[idx + 2];
       let a = levelData.pixels[idx + 3];
-      if (g === 255 || b === 255) {
-        a = 0;
-      }
-      map[idx / 4] = a;
+      if (g < min) min = g;
+      if (g > max) max = g;
+      map[idx / 4] = a > 32 ? 255 : 0;
     }
     return map;
   }
@@ -82,7 +87,6 @@ export class level {
       const isCloseToFood = dx * dx + dy * dy < food.originalRadius * food.originalRadius * 1.5;
 
       if (isCloseToFood) {
-        ant.autonomousEnd = globals.gameTimeMs + 100;
         ant.SetDir(new Vector(-signX, -signY).normalize());
         return null;
       }
@@ -97,22 +101,34 @@ export class level {
     this.backgroundSprite = sprites.level1Background;
     this.backgroundSprite.width = globals.sceneW;
     this.backgroundSprite.height = globals.sceneH;
+
+    // this.foodLayerSprite = sprites.foodLayer;
+    // this.foodLayerSprite.width = globals.sceneW;
+    // this.foodLayerSprite.height = globals.sceneH;
+
     game.app.stage.addChild(this.backgroundSprite);
+    // game.app.stage.addChild(this.foodLayerSprite);
     game.app.stage.addChild(collision.foodMarkers.sprite);
     game.app.stage.addChild(collision.homeMarkers.sprite);
 
-    level.home1 = createHome(580, 210, 30);
+    level.home1 = createHome(100, 200, 30);
     level.homes = [level.home1];
 
-    level.foods = []
-    level.foods.push(createFood(1125, 820, 30, 200));
-    level.foods.push(createFood(520, 420, 25, 50));
-    level.foods.push(createFood(130, 590, 25, 50));
-    level.foods.push(createFood(140, 805, 25, 100));
-    level.foods.push(createFood(425, 260, 30, 10));
-    level.foods.push(createFood(580, 110, 30, 10));
-    level.foods.push(createFood(1070, 320, 25, 50));
-    level.foods.push(createFood(1010, 547, 20, 9999.9));
+    level.foods = [];
+    // startup
+    level.foods.push(createFood(545, 195, 20, 10));
+    level.foods.push(createFood(120, 350, 20, 10));
+    level.foods.push(createFood(260, 185, 20, 10));
+    level.foods.push(createFood(480, 360, 20, 10));
+    level.foods.push(createFood(120, 530, 20, 10));
+    level.foods.push(createFood(300, 550, 20, 10));
+    level.foods.push(createFood(1040, 170, 20, 10));
+    level.foods.push(createFood(1000, 470, 20, 10));
+    level.foods.push(createFood(700, 460, 20, 10));
+    level.foods.push(createFood(840, 750, 20, 10));
+    level.foods.push(createFood(90, 730, 20, 10));
+    level.foods.push(createFood(470, 780, 20, 10));
+    level.foods.push(createFood(1150, 850, 20, 10));
   }
 }
 

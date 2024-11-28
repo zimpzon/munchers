@@ -5,6 +5,7 @@ import globals from '../../Game/globals';
 
 function GameCanvas(): JSX.Element {
   useEffect(() => {
+    game.resetGame();
     game.run(tick);
 
     return () => {
@@ -36,7 +37,7 @@ function GameCanvas(): JSX.Element {
     collision.foodMarkers.updateDebug();
   }
 
-  return <div id='gameCanvas' style={{ width: '100%' }} />;
+  return <div id='gameCanvas'/>;
 }
 
 export default GameCanvas;

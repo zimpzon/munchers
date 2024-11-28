@@ -4,7 +4,6 @@ import collision from './collision';
 import game from './game';
 import globals from './globals';
 import level from './level';
-import { distanceSqr } from './util';
 import markers, { sampleResult } from './markers';
 import sprites from './sprites';
 
@@ -45,11 +44,7 @@ export class Ant {
   homeScanId: number;
   prevIdxHomeSet: number = -1;
   prevIdxFoodSet: number = -1;
-  public autonomousEnd: number = -1;
   latestMarkersSample: sampleResult = new sampleResult();
-  nextStuckCheckMs: number = 0;
-  stuckCheckX: number = -9999;
-  stuckCheckY: number = -9999;
 
   // Globals initialized in top of update()
   isOnHome: boolean = false;
@@ -64,7 +59,7 @@ export class Ant {
     ant.tint = 0xffffff;
     ant.width = 10;
     ant.height = 10;
-    ant.anchor.set(0.5, 0.5);
+    ant.anchor.set(0.2, 0.5);
     this.container.addChild(ant);
 
     this.pointFwd.x = ant.width * 0.6;
@@ -74,7 +69,7 @@ export class Ant {
     dotFwd.height = state.motivationState === MotivationState.deliverFood ? this.sugarSize : 0;
     dotFwd.position = this.pointFwd;
     dotFwd.anchor.set(0.5, 0.5);
-    dotFwd.tint = 0x10edef;
+    dotFwd.tint = 0xf06d6f;
     this.scanFwd = dotFwd;
     this.container.addChild(this.scanFwd);
 
@@ -130,6 +125,17 @@ export class Ant {
         this.prevIdxFoodSet
       );
 
+      for (let y: number = -2; y <= 3; ++y) {
+        for (let x: number = -2; x <= 3; ++x) {
+          collision.foodMarkers.set(
+            this.state.posX + x,
+            this.state.posY + y,
+            this.state.foodScent,
+            this.prevIdxFoodSet
+          );
+        }
+      }
+
       return;
     }
   }
@@ -139,8 +145,6 @@ export class Ant {
       this.state.motivationState = MotivationState.deliverFood;
       this.scanFwd.width = this.sugarSize;
       this.scanFwd.height = this.sugarSize;
-      this.stuckCheckX = -9999;
-      this.stuckCheckY = -9999;
     }
   }
 
@@ -149,8 +153,8 @@ export class Ant {
       this.state.motivationState = MotivationState.lookForFood;
       this.scanFwd.width = 0;
       this.scanFwd.height = 0;
-      this.stuckCheckX = -9999;
-      this.stuckCheckY = -9999;
+      this.state.dirX *= -1;
+      this.state.dirY *= -1;
     }
   }
 
@@ -181,8 +185,6 @@ export class Ant {
   }
 
   private sample(markers: markers) {
-    if (globals.gameTimeMs < this.autonomousEnd) return;
-
     const fwd = this.container.toGlobal(this.scanFwd);
     markers.sample(fwd.x, fwd.y, this.latestMarkersSample);
     if (this.latestMarkersSample.success === true) {
@@ -204,7 +206,7 @@ export class Ant {
 
   private explore(modulus: number) {
     if (Math.abs(this.turnAngle) > 0) {
-      this.turnAngle *= 0.99;
+      this.turnAngle *= 0.9;
     }
 
     const rndSwitch = Math.random() / modulus < 0.1;
@@ -218,26 +220,6 @@ export class Ant {
   }
 
   private common() {
-    if (
-      this.state.motivationState === MotivationState.deliverFood ||
-      this.state.motivationState === MotivationState.lookForFood
-    ) {
-      if (globals.gameTimeMs > this.nextStuckCheckMs) {
-        this.nextStuckCheckMs = globals.gameTimeMs + 500 + Math.random() * 250.0;
-        const dist = distanceSqr(
-          this.state.posX,
-          this.state.posY,
-          this.stuckCheckX,
-          this.stuckCheckY
-        );
-        if (dist < 20 * 20) {
-          this.autonomousEnd = globals.gameTimeMs + 100;
-        }
-        this.stuckCheckX = this.state.posX;
-        this.stuckCheckY = this.state.posY;
-      }
-    }
-
     const vec = this.getDirVec();
     vec.rotate(PIXI.DEG_TO_RAD * this.turnAngle * globals.simStep * this.individualSpeed);
     this.SetDir(vec);

@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js';
 import * as Custom from './CustomBufferResource';
 import globals from './globals';
+import collision from './collision';
 
 export class sampleResult {
   public targetX: number = 0;
@@ -87,7 +88,9 @@ class markers {
   }
 
   public updateDebug() {
-    this.uniforms.gameTimeMs = globals.gameTimeMs;
+    this.uniforms.gameTimeMs = globals.showTrails
+      ? globals.gameTimeMs + 10000
+      : globals.gameTimeMs + 25000;
     this.tex.update();
   }
 
@@ -110,6 +113,8 @@ class markers {
       }
     }
 
+    // We use idxPrev here, even if there is idxBest. For some reason idxBest works terribly.
+    // I don't remember writing this, so just ignore and leave it at idxPrev.
     if (idxPrev < 0) result.success = false;
 
     if (result.success) {
@@ -124,6 +129,12 @@ class markers {
     if (scentValue === 0) scentValue = Math.random() * 1000;
 
     const idx = this.calcIdx(worldX, worldY);
+    // do not set scent values next to a wall (attempt to get rid of stuck ants at corners)
+
+    if (collision.isCloseToWall(worldX, worldY)) {
+      return 0;
+    }
+
     if (scentValue > this.scent[idx] || globals.gameTimeMs > this.timestamps[idx]) {
       this.timestamps[idx] = globals.gameTimeMs + this.decayMs;
       this.scent[idx] = scentValue;
