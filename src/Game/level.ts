@@ -15,6 +15,8 @@ export class level {
   backgroundSprite: PIXI.Sprite | undefined;
   foodCircleSprite: PIXI.Sprite | undefined;
 
+  static hohoText: PIXI.Text;
+
   static homes: Home[] = [];
   static foods: Food[] = [];
 
