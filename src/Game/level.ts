@@ -117,16 +117,16 @@ export class level {
     level.foods.push(createFood(545, 195, 20, 10));
     level.foods.push(createFood(120, 350, 20, 10));
     level.foods.push(createFood(260, 185, 20, 10));
-    level.foods.push(createFood(480, 360, 20, 10));
-    level.foods.push(createFood(120, 530, 20, 10));
-    level.foods.push(createFood(300, 550, 20, 10));
-    level.foods.push(createFood(1040, 170, 20, 10));
-    level.foods.push(createFood(1000, 470, 20, 10));
-    level.foods.push(createFood(700, 460, 20, 10));
-    level.foods.push(createFood(840, 750, 20, 10));
-    level.foods.push(createFood(90, 730, 20, 10));
-    level.foods.push(createFood(470, 780, 20, 10));
-    level.foods.push(createFood(1150, 850, 20, 10));
+    level.foods.push(createFood(480, 360, 20, 15));
+    level.foods.push(createFood(120, 530, 20, 15));
+    level.foods.push(createFood(300, 550, 20, 15));
+    level.foods.push(createFood(1040, 170, 20, 15));
+    level.foods.push(createFood(1000, 470, 20, 15));
+    level.foods.push(createFood(700, 460, 20, 25));
+    level.foods.push(createFood(840, 750, 20, 25));
+    level.foods.push(createFood(90, 730, 20, 25));
+    level.foods.push(createFood(470, 780, 20, 25));
+    level.foods.push(createFood(1150, 850, 20, 50));
   }
 }
 
