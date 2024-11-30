@@ -3,6 +3,7 @@ import * as PIXI from 'pixi.js';
 import sprites from './../../Game/sprites';
 import collision from '../../Game/collision';
 import level from '../../Game/level';
+import * as generators from './../../Game/generators';
 
 function GameLoader(props: any): JSX.Element {
   const [loadingComplete, setLoadingComplete] = useState(false);
@@ -22,7 +23,13 @@ function GameLoader(props: any): JSX.Element {
 
     loader.load((_, resources: any) => {
       const imgData1 = getImageData(levelPath);
-      collision.level_phase1 = level.loadCollisionMap(imgData1);
+
+      // Usage example
+      // const imgData2 = generators.createCentralHub(imgData1.pixels, imgData1.w, imgData1.h, 10, 50, 255, 255, 255);
+      // const imgData2 = generators.createGridMaze(imgData1.pixels, imgData1.w, imgData1.h, 10, 255, 255, 255);
+      const imgData2 = imgData1;
+
+      collision.level_phase1 = level.loadCollisionMap(imgData2);
 
       sprites.whiteCircle = new PIXI.Sprite(resources.whiteCircle.texture);
       sprites.white_2x2 = new PIXI.Sprite(resources.white_2x2.texture);
@@ -30,9 +37,10 @@ function GameLoader(props: any): JSX.Element {
       sprites.antDefault = new PIXI.Sprite(resources.antDefault.texture);
       sprites.antDefault.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
 
-      sprites.level1Background = new PIXI.Sprite(resources.level1Background.texture);
+      const baseTexture: any = PIXI.BaseTexture.fromBuffer(imgData1.pixels, imgData1.w, imgData1.h);
+      sprites.level1Background = new PIXI.Sprite(new PIXI.Texture(baseTexture));
       sprites.level1Background.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
-
+  
       sprites.foodLayer = new PIXI.Sprite(resources.foodLayer.texture);
       sprites.foodLayer.texture.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
 
