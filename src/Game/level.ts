@@ -116,6 +116,7 @@ export class level {
 
     level.foods = [];
     // startup
+    level.foods.push(createFood(105, 120, 20, 10));
     level.foods.push(createFood(545, 195, 20, 10));
     level.foods.push(createFood(120, 350, 20, 10));
     level.foods.push(createFood(260, 185, 20, 10));

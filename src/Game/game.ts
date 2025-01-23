@@ -100,7 +100,7 @@ class game {
       fontFamily: 'lucida console',
       fontSize: 8,
       fill: 0xffffff,
-      align: 'center'
+      align: 'center',
     });
 
     text.x = this.app.screen.width / 2;
@@ -116,7 +116,7 @@ class game {
   public static loadGame() {
     this.gameState = new GameState();
     this.ants = [];
-    for (let i: number = 0; i < 8; ++i) {
+    for (let i: number = 0; i < 2; ++i) {
       this.addAnt();
     }
     this.addMoney(0);
@@ -127,7 +127,7 @@ class game {
   }
 
   static nextHoHo: number = 1000;
-  
+
   static tickGame() {
     if (globals.gameTimeMs > this.nextHoHo) {
       this.nextHoHo = globals.gameTimeMs + Math.random() * 2000 + 6000;
@@ -151,7 +151,7 @@ class game {
 
     //     // Fade out the text as it moves up
     //     text.alpha = Math.max(0, text.alpha - 0.01);
-    
+
     //     // Remove the text if it's completely faded
     //     if (text.alpha <= 0) {
     //         app.stage.removeChild(text);
