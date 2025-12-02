@@ -116,7 +116,7 @@ class game {
   public static loadGame() {
     this.gameState = new GameState();
     this.ants = [];
-    for (let i: number = 0; i < 8; ++i) {
+    for (let i: number = 0; i < 2; ++i) {
       this.addAnt();
     }
     this.addMoney(0);

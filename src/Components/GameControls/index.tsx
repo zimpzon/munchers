@@ -43,16 +43,19 @@ function ControlsTop(): JSX.Element {
       </div>
       <div className='buyButtonsSection'>
         <Button
+          size="sm"
           className={'buyButton bg-success ' + (canBuy1 ? '' : 'bg-secondary')}
           onClick={() => onBuy(1, 1)}>
           Buy 1 ($1)
         </Button>
         <Button
+          size="sm"
           className={'buyButton bg-success' + (canBuy10 ? '' : 'bg-secondary')}
           onClick={() => onBuy(10, 9)}>
           Buy 10 ($9)
         </Button>
         <Button
+          size="sm"
           className={'buyButton bg-success' + (canBuy100 ? '' : 'bg-secondary')}
           onClick={() => onBuy(100, 80)}>
           Buy 100 ($80)

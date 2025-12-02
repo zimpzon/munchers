@@ -111,24 +111,24 @@ export class level {
     game.app.stage.addChild(collision.foodMarkers.sprite);
     game.app.stage.addChild(collision.homeMarkers.sprite);
 
-    level.home1 = createHome(100, 200, 30);
+    level.home1 = createHome(67, 133, 30);
     level.homes = [level.home1];
 
     level.foods = [];
     // startup
-    level.foods.push(createFood(545, 195, 20, 10));
-    level.foods.push(createFood(120, 350, 20, 10));
-    level.foods.push(createFood(260, 185, 20, 10));
-    level.foods.push(createFood(480, 360, 20, 15));
-    level.foods.push(createFood(120, 530, 20, 15));
-    level.foods.push(createFood(300, 550, 20, 15));
-    level.foods.push(createFood(1040, 170, 20, 15));
-    level.foods.push(createFood(1000, 470, 20, 15));
-    level.foods.push(createFood(700, 460, 20, 25));
-    level.foods.push(createFood(840, 750, 20, 25));
-    level.foods.push(createFood(90, 730, 20, 25));
-    level.foods.push(createFood(470, 780, 20, 25));
-    level.foods.push(createFood(1150, 850, 20, 50));
+    level.foods.push(createFood(363, 130, 20, 10));
+    level.foods.push(createFood(80, 233, 20, 10));
+    level.foods.push(createFood(173, 123, 20, 10));
+    level.foods.push(createFood(320, 240, 20, 15));
+    level.foods.push(createFood(80, 353, 20, 15));
+    level.foods.push(createFood(200, 367, 20, 15));
+    level.foods.push(createFood(693, 113, 20, 15));
+    level.foods.push(createFood(667, 313, 20, 15));
+    level.foods.push(createFood(467, 307, 20, 25));
+    level.foods.push(createFood(560, 500, 20, 25));
+    level.foods.push(createFood(60, 487, 20, 25));
+    level.foods.push(createFood(313, 520, 20, 25));
+    level.foods.push(createFood(767, 567, 20, 50));
   }
 }
 
