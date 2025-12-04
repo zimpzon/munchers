@@ -7,7 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 function ControlsTop(): JSX.Element {
   const [turbo, setTurbo] = useState(false);
   const [showTrails, setShowTrails] = useState(true);
-  const [gameScale, setGameScale] = useState(90);
+  const [gameScale, setGameScale] = useState(60);
 
   useEffect(() => {
     // Set initial scale when component mounts

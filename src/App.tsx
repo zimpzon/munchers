@@ -33,7 +33,7 @@ function App(): JSX.Element {
     <div className='App'>
       <Container fluid>
         <Row>
-          <Col xs={3}>
+          <Col xs={2}>
             <GameControls />
           </Col>
           <Col xs={8}>
