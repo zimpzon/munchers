@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 import game from '../../Game/game';
 import globals from '../../Game/globals';
@@ -7,6 +7,16 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 function ControlsTop(): JSX.Element {
   const [turbo, setTurbo] = useState(false);
   const [showTrails, setShowTrails] = useState(true);
+  const [gameScale, setGameScale] = useState(90);
+
+  useEffect(() => {
+    // Set initial scale when component mounts
+    const gameCanvas = document.getElementById('gameCanvas');
+    if (gameCanvas) {
+      gameCanvas.style.transform = `scale(${gameScale / 100})`;
+      gameCanvas.style.transformOrigin = 'top left';
+    }
+  }, [gameScale]);
 
   const onBuy = (amount: number, price: number) => {
     if (price > game.money) return;
@@ -24,6 +34,16 @@ function ControlsTop(): JSX.Element {
   const handleShowTrailsChange = () => {
     globals.showTrails = !showTrails;
     setShowTrails(!showTrails);
+  };
+
+  const handleScaleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const scale = parseInt(event.target.value);
+    setGameScale(scale);
+    const gameCanvas = document.getElementById('gameCanvas');
+    if (gameCanvas) {
+      gameCanvas.style.transform = `scale(${scale / 100})`;
+      gameCanvas.style.transformOrigin = 'top left';
+    }
   };
 
   const canBuy1 = true || game.money >= 1;
@@ -70,6 +90,18 @@ function ControlsTop(): JSX.Element {
           <input type='checkbox' checked={showTrails} onChange={handleShowTrailsChange} />
           <label onClick={handleShowTrailsChange}>Trails</label>
         </div>
+      </div>
+      <div style={{ display: 'flex', gap: '5px', alignItems: 'center', justifyContent: 'center', marginTop: '10px' }}>
+        <label>Size:</label>
+        <input
+          type='range'
+          min='25'
+          max='200'
+          value={gameScale}
+          onChange={handleScaleChange}
+          style={{ width: '100px' }}
+        />
+        <span>{gameScale}%</span>
       </div>
     </>
   );

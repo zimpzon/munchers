@@ -8,6 +8,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Build**: `npm run build` - Builds the production app to the build folder
 - **Test**: `npm test` - Launches the test runner in interactive watch mode
 
+## Deployment
+
+### itch.io Deployment
+The app is configured for itch.io deployment with relative paths (`homepage: "./"` in package.json).
+After building, upload the entire `build/` folder contents to itch.io as an HTML5 game.
+
+### Asset Loading
+Assets are now loaded through the React build pipeline to ensure compatibility with different hosting environments:
+- Large assets (>10KB) get hashed filenames in `build/static/media/`
+- Small assets (<10KB) are automatically inlined as base64 data URIs
+- All paths are generated as relative URLs for maximum compatibility
+
 ## Architecture
 
 This is a React + TypeScript ant colony simulation game using PixiJS for 2D graphics.

@@ -7,6 +7,27 @@ import sprites from './sprites';
 import { distanceSqr } from './util';
 import { Ant } from './ant';
 
+// Base reference dimensions (800x600)
+const BASE_WIDTH = 800;
+const BASE_HEIGHT = 600;
+
+// Helper functions to scale coordinates relative to base size
+function scaleX(baseX: number): number {
+  return (baseX * globals.sceneW) / BASE_WIDTH;
+}
+
+function scaleY(baseY: number): number {
+  return (baseY * globals.sceneH) / BASE_HEIGHT;
+}
+
+function scaleRadius(baseRadius: number): number {
+  return baseRadius;
+  // Use the average of width and height scaling to maintain proportions
+  const scaleFactorX = globals.sceneW / BASE_WIDTH;
+  const scaleFactorY = globals.sceneH / BASE_HEIGHT;
+  return baseRadius * ((scaleFactorX + scaleFactorY) / 2);
+}
+
 export class level {
   static phase: Phase;
   static home1: Home;
@@ -14,8 +35,6 @@ export class level {
   backgroundSprite: PIXI.Sprite | undefined;
   foodLayerSprite: PIXI.Sprite | undefined;
   foodCircleSprite: PIXI.Sprite | undefined;
-
-  static hohoText: PIXI.Text;
 
   static homes: Home[] = [];
   static foods: Food[] = [];
@@ -132,43 +151,52 @@ export class level {
   }
 }
 
-function createHome(xPos: number, yPos: number, radius: number): Home {
+function createHome(baseX: number, baseY: number, baseRadius: number): Home {
+  const scaledX = scaleX(baseX);
+  const scaledY = scaleY(baseY);
+  const scaledRadius = scaleRadius(baseRadius);
+
   const home: Home = {
-    x: xPos,
-    y: yPos,
-    radius: radius,
+    x: scaledX,
+    y: scaledY,
+    radius: scaledRadius,
     sprite: new PIXI.Sprite(sprites.whiteCircle.texture),
   };
 
   home.sprite.anchor.set(0.0, 0.0);
-  home.sprite.width = radius * 2;
-  home.sprite.height = radius * 2;
+  home.sprite.width = scaledRadius * 2;
+  home.sprite.height = scaledRadius * 2;
   home.sprite.anchor.set(0.5, 0.5);
-  home.sprite.x = xPos;
-  home.sprite.y = yPos;
+  home.sprite.x = scaledX;
+  home.sprite.y = scaledY;
   home.sprite.tint = 0xaaaaaa;
   const icon = new PIXI.Sprite(sprites.homeIcon.texture);
-  icon.width = 36;
-  icon.height = 36;
+  const iconSize = scaleRadius(36);
+  icon.width = iconSize;
+  icon.height = iconSize;
   icon.anchor.set(0.5, 0.5);
   home.sprite.addChild(icon);
   game.app.stage.addChild(home.sprite);
   return home;
 }
 
-function createFood(xPos: number, yPos: number, radius: number, amount: number): Food {
+function createFood(baseX: number, baseY: number, baseRadius: number, amount: number): Food {
+  const scaledX = scaleX(baseX);
+  const scaledY = scaleY(baseY);
+  const scaledRadius = scaleRadius(baseRadius);
+
   const food: Food = {
-    x: xPos,
-    y: yPos,
-    maxRadius: radius,
-    radius: radius,
-    originalRadius: radius,
+    x: scaledX,
+    y: scaledY,
+    maxRadius: scaledRadius,
+    radius: scaledRadius,
+    originalRadius: scaledRadius,
     maxAmount: amount,
     amount: amount,
     sprite: new PIXI.Sprite(sprites.whiteCircle.texture),
     text: new PIXI.Text(0, {
       fontFamily: 'Verdana',
-      fontSize: 16,
+      fontSize: scaleRadius(16),
       fill: 0xffffff,
       align: 'center',
     }),
@@ -188,10 +216,10 @@ function createFood(xPos: number, yPos: number, radius: number, amount: number):
   };
 
   food.sprite.anchor.set(0.5, 0.5);
-  food.sprite.width = radius * 2;
-  food.sprite.height = radius * 2;
-  food.sprite.x = xPos;
-  food.sprite.y = yPos;
+  food.sprite.width = scaledRadius * 2;
+  food.sprite.height = scaledRadius * 2;
+  food.sprite.x = scaledX;
+  food.sprite.y = scaledY;
   food.sprite.tint = 0x9f1020;
   food.text.anchor.set(0.5, 0.5);
   food.sprite.addChild(food.text);
