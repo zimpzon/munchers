@@ -96,6 +96,18 @@ class game {
     this.level = new level();
     this.level.loadLevel();
 
+    const text = new PIXI.Text('HO HO HO', {
+      fontFamily: 'lucida console',
+      fontSize: 8,
+      fill: 0xffffff,
+      align: 'center',
+    });
+
+    text.x = this.app.screen.width / 2;
+    text.y = this.app.screen.height;
+    text.anchor.set(0.5);
+    this.app.stage.addChild(text);
+
     this.loadGame();
   }
 
@@ -112,7 +124,6 @@ class game {
     this.app.ticker.add(tick);
   }
 
- 
   static tickGame() {
     for (let ant of this.ants) {
       ant.update();

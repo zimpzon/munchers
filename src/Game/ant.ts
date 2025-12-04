@@ -79,6 +79,8 @@ export class Ant {
     this.foodScanId = this.id % globals.foodScanModulus;
     this.homeScanId = this.id % globals.homeScanModulus;
 
+    this.individualSpeed -= Math.random() * 10;
+
     game.app.stage.addChild(this.container);
   }
 
