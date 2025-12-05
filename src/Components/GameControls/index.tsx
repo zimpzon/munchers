@@ -103,6 +103,10 @@ function ControlsTop(): JSX.Element {
         />
         <span>{gameScale}%</span>
       </div>
+      <br/>
+      <div style={{ marginTop: '15px', fontSize: '14px', textAlign: 'center', color: '#666' }}>
+        If your first ants fail to find food, reload the page to get luckier ones.
+      </div>
     </>
   );
 }
